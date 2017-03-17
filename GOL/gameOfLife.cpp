@@ -29,7 +29,7 @@ enum valid_colors {
 bool GOLInitBoard(vector<vector<bool> > &board);
 bool step(vector<vector<bool> > &board1, vector<vector<bool> > &board2);
 bool drawBoard(Display *dpy, Window &root, GC &g, 
-            vector<vector<bool> > board, XColor liveColor);
+            vector<vector<bool> > board, XColor liveColor, XColor deadColor);
 
 int main() {
     Display* dpy;
@@ -40,10 +40,10 @@ int main() {
     char counter[20];
     int generation = 0;
 
-    const char* colors[NUM_COLORS] = {"rgb:00/00/00", "rgb:ff/00/00", 
-                                    "rgb:00/ff/00", "rgb:00/00/ff",
-                                    "rgb:ff/ff/00", "rgb:ff/00/ff", 
-                                    "rgb:00/ff/ff", "rgb:ff/ff/ff"};
+    const char* colors[NUM_COLORS] = {"rgb:1d/1f/21", "rgb:cc/66/66", 
+                                    "rgb:b5/bd/68", "rgb:81/a2/be",
+                                    "rgb:f0/c6/74", "rgb:b2/94/bb", 
+                                    "rgb:8a/be/b7", "rgb:c5/c8/c6"};
     XColor xcolors[NUM_COLORS];
     XColor xc, sc;
 
@@ -91,7 +91,8 @@ int main() {
     GOLInitBoard(buf1);
 
     while(1) {
-        drawBoard(dpy, root, g, buf1, xcolors[liveColor]);
+        //draw a generation
+        drawBoard(dpy, root, g, buf1, xcolors[liveColor], xcolors[0]);
         sprintf(counter, "Generation: %d", generation);
         XSetForeground(dpy, g, xcolors[liveColor].pixel);
         XDrawString(dpy, root, g, 50, 50, counter, strlen(counter));
@@ -100,7 +101,8 @@ int main() {
         step(buf1, buf2);
         usleep(SIM_SPEED);
 
-        drawBoard(dpy, root, g, buf2, xcolors[liveColor]);
+        //draw the next generation, but swap the buffers
+        drawBoard(dpy, root, g, buf1, xcolors[liveColor], xcolors[0]);
         sprintf(counter, "Generation: %d", generation);
         XSetForeground(dpy, g, xcolors[liveColor].pixel);
         XDrawString(dpy, root, g, 50, 50, counter, strlen(counter));
@@ -178,7 +180,7 @@ bool step(vector<vector<bool> > &board1, vector<vector<bool> > &board2) {
 }
 
 bool drawBoard(Display *dpy, Window &root, GC &g, 
-            vector<vector<bool> > board, XColor liveColor) {
+            vector<vector<bool> > board, XColor liveColor, XColor deadColor) {
 
     for (int x = 0; x < board.size(); x++) {
         for (int y = 0; y < board[x].size(); y++) {
@@ -193,8 +195,7 @@ bool drawBoard(Display *dpy, Window &root, GC &g,
             }
 
             else {
-                XSetForeground(dpy, g, 
-                        BlackPixelOfScreen(DefaultScreenOfDisplay(dpy)));
+                XSetForeground(dpy, g, deadColor.pixel);
             }
 
             XFillRectangle(dpy, root, g, x*CELL_W, y*CELL_H, CELL_W, CELL_W);
