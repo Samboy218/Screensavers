@@ -1,5 +1,6 @@
 modName = gameOfLife
 sourceName = $(modName).cpp
+installpath = /usr/lib/xscreensaver/
 
 
 all: $(modName)
@@ -13,8 +14,12 @@ clean:
 
 .PHONY: install
 install: $(modName)
-	cp $(modName) ../
+	cp $(modName) $(installpath)
 
 .PHONY: uninstall
 uninstall: 
-	rm -f ../$(modName)
+	rm -f $(installpath)$(modName)
+
+.PHONY: debug
+debug: $(sourceName) vroot.h
+	 g++ -o $(modName) $(sourceName) -L/usr/lib/x86_64-linux-gnu -lX11 -g

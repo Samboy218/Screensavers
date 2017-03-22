@@ -4,7 +4,6 @@
 #include <X11/Xlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <vector>
 #include "vroot.h"
 
 // 1/LIFE_CHANCE is the probability a cell will begin with life
@@ -13,10 +12,13 @@
 // the size, in pixels, of each cell
 #define CELL_H 5
 #define CELL_W 5
+
+//how long to wait between each generation (microseconds)
 #define SIM_SPEED 30000
+
+//how many generations to wait until we restart
 #define NEXT_AT 2000
 
-using std::vector;
 
 enum valid_colors {
     COLOR_BLACK, COLOR_RED,
@@ -26,12 +28,33 @@ enum valid_colors {
     NUM_COLORS
 };
 
-bool GOLInitBoard(vector<vector<bool> > &board);
-bool step(vector<vector<bool> > &board1, vector<vector<bool> > &board2);
-bool drawBoard(Display *dpy, Window &root, GC &g, 
-            vector<vector<bool> > board, XColor liveColor, XColor deadColor);
+class GOLBoard
+{
+    public:
+    GOLBoard(int w, int h);
+    ~GOLBoard();
+    void setCell(int x, int y);
+    void clearCell(int x, int y);
+    unsigned char cellState(int x, int y);
+    unsigned char countNeighbors(int x, int y);
+    void step();
+    void init(int aliveChance);
+    int getW();
+    int getH();
+    void drawBoard(Display *dpy, Window &root, GC &g, 
+                   XColor liveColor, XColor deadColor);
 
-int main() {
+
+    private:
+    unsigned char* board;
+    unsigned char* tempBoard;
+    int w;
+    int h;
+    int lengthB;
+};
+
+int main() 
+{
     Display* dpy;
     Window root;
     GC g;
@@ -60,7 +83,8 @@ int main() {
     g = XCreateGC(dpy, root, 0, NULL);
 
     //init colors
-    for (int i = 0; i<NUM_COLORS; i++) {
+    for (int i = 0; i<NUM_COLORS; i++) 
+    {
         XAllocNamedColor(dpy, 
                         DefaultColormapOfScreen(DefaultScreenOfDisplay(dpy)),
                         colors[i], 
@@ -76,129 +100,239 @@ int main() {
     int gridW = wa.width/CELL_W;
     int gridH = wa.height/CELL_H;
 
-    vector<vector<bool> > buf1;
-    vector<vector<bool> > buf2;
-    buf1.resize(gridW + 2);
-    buf2.resize(gridW + 2);
-
-    for (int i = 0; i< gridW + 2; i++) {
-        buf1[i].resize(gridH + 2);
-        buf2[i].resize(gridH + 2);
-    }
 
     int liveColor = (random()%(NUM_COLORS-1)) + 1; 
 
-    GOLInitBoard(buf1);
+    GOLBoard board(gridW, gridH);
+    board.init(LIFE_CHANCE);
 
-    while(1) {
+    while(1) 
+    {
         //draw a generation
-        drawBoard(dpy, root, g, buf1, xcolors[liveColor], xcolors[0]);
+        board.drawBoard(dpy, root, g, xcolors[liveColor], xcolors[0]);
         sprintf(counter, "Generation: %d", generation);
         XSetForeground(dpy, g, xcolors[liveColor].pixel);
         XDrawString(dpy, root, g, 50, 50, counter, strlen(counter));
         generation++;
         XFlush(dpy);
-        step(buf1, buf2);
+        board.step();
         usleep(SIM_SPEED);
 
-        //draw the next generation, but swap the buffers
-        drawBoard(dpy, root, g, buf1, xcolors[liveColor], xcolors[0]);
-        sprintf(counter, "Generation: %d", generation);
-        XSetForeground(dpy, g, xcolors[liveColor].pixel);
-        XDrawString(dpy, root, g, 50, 50, counter, strlen(counter));
-        generation++;
-        XFlush(dpy);
-        step(buf2, buf1);
-        usleep(SIM_SPEED);
-
-        if (generation >= NEXT_AT) {
-            GOLInitBoard(buf1);
+        if (generation >= NEXT_AT) 
+        {
+            board.init(LIFE_CHANCE);
             generation = 0;
             liveColor = (random()%(NUM_COLORS-1)) + 1; 
         }
     }
-
-
 }
 
-bool GOLInitBoard(vector<vector<bool> > &board) {
-    for (int x = 0; x < board.size(); x++) {
-        for (int y = 0; y < board[x].size(); y++) {
-            //the outside is a buffer area of always 0, for no wrapping
-            if (x == 0 || y == 0 
-                || x == board.size() - 1 
-                || y == board[x].size() - 1) {
-                board[x][y] = 0;
-            }
-            else if (random()%LIFE_CHANCE == 0)
-                board[x][y] = 1;
-            else
-                board[x][y] = 0;
-        }
-    }
-    return true;
-}
-
-bool step(vector<vector<bool> > &board1, vector<vector<bool> > &board2) {
-    int live = 0;
-
-    for (int x = 0; x < board1.size(); x++) {
-        for (int y = 0; y < board1[x].size(); y++) {
-             
-            //again, keep that outer buffer at 0
-            if (x == 0 || y == 0 
-            || x == board1.size() - 1 
-            || y == board1[x].size() - 1) {
-               board2[x][y] = 0;
-               continue;
-            }
-
-            live = board1[x-1][y-1] + board1[x-1][y] + board1[x-1][y+1] +
-                board1[x+1][y-1] + board1[x+1][y] + board1[x+1][y+1] +
-                board1[x][y-1] + board1[x][y+1] ;
-
-            if (board1[x][y] == 1) {
-                switch (live) {
-                    case 2:
-                    case 3:
-                    board2[x][y] = 1;
-                    break;
-
-                    default:
-                    board2[x][y] = 0;
-                }
-            }
-            else if (live == 3) {
-                board2[x][y] = 1;
-            }
-            else {
-                board2[x][y] = 0;
-            }
-        }
-    }
-    return true;
-}
-
-bool drawBoard(Display *dpy, Window &root, GC &g, 
-            vector<vector<bool> > board, XColor liveColor, XColor deadColor) {
-
-    for (int x = 0; x < board.size(); x++) {
-        for (int y = 0; y < board[x].size(); y++) {
-
-            if (x == 0 || y == 0 
-            || x == board.size() - 1 || y == board[x].size() - 1) {
-                continue;
-            }
-
-            if (board[x][y] == 1) {
+void GOLBoard::drawBoard(Display *dpy, Window &root, GC &g, 
+                         XColor liveColor, XColor deadColor)
+{
+    unsigned char* cellPtr;
+    cellPtr = board;
+    for (int y = 0; y < h; y++)
+    {
+        for (int x = 0; x < w; x++)
+        {
+            if ((*cellPtr) & 0x01)
+            {
                 XSetForeground(dpy, g, liveColor.pixel);
             }
-
-            else {
+            else
+            {
                 XSetForeground(dpy, g, deadColor.pixel);
             }
-
-            XFillRectangle(dpy, root, g, x*CELL_W, y*CELL_H, CELL_W, CELL_W);
+            cellPtr++;
+            XFillRectangle(dpy, root, g, x*CELL_W, y*CELL_H, CELL_W, CELL_H);
         }
     }
+} 
+
+GOLBoard::GOLBoard(int x, int y)
+{
+    w = x;
+    h = y;
+    lengthB = w*h;
+    board = new unsigned char[lengthB];
+    tempBoard = new unsigned char[lengthB];    
+    memset(board, 0, lengthB);
+    memset(tempBoard, 0, lengthB);
+}
+
+GOLBoard::~GOLBoard()
+{
+    delete[] board;
+    board = NULL;
+    delete[] tempBoard;
+    tempBoard = NULL;
+}
+
+//turn cell on, and update neighbors
+void GOLBoard::setCell(int x, int y)
+{
+    if ( x >= w || y >= h)
+        return;
+
+    unsigned char* cellPtr = board + (y*w) + x;
+    int xoleft, xoright, youp, yodown;
+    
+    if (x == 0)
+        xoleft = w - 1;
+    else
+        xoleft = -1;
+    if (y == 0)
+        youp = lengthB - w;
+    else
+        youp = -w;
+    if (x == (w-1))
+        xoright = -(w - 1);
+    else
+        xoright = 1;
+    if (y == h-1)
+        yodown = -(lengthB - w);
+    else
+        yodown = w;
+
+    *(cellPtr) |= 0x01;
+    *(cellPtr + youp + xoleft) += 2;
+    *(cellPtr + youp) += 2;
+    *(cellPtr + youp + xoright) += 2;
+    *(cellPtr + xoleft) += 2;
+    *(cellPtr + xoright) += 2;
+    *(cellPtr + yodown + xoleft) += 2;
+    *(cellPtr + yodown) += 2;
+    *(cellPtr + yodown + xoright) += 2;
+
+}
+
+void GOLBoard::clearCell(int x, int y)
+{
+    if ( x >= w || y >= h)
+        return;
+
+    unsigned char* cellPtr = board + (y*w) + x;
+    int xoleft, xoright, youp, yodown;
+    
+    if (x == 0)
+        xoleft = w - 1;
+    else
+        xoleft = -1;
+    if (y == 0)
+        youp = lengthB - w;
+    else
+        youp = -w;
+    if (x == (w-1))
+        xoright = -(w - 1);
+    else
+        xoright = 1;
+    if (y == h-1)
+        yodown = -(lengthB - w);
+    else
+        yodown = w;
+
+    *(cellPtr) &= 0xFE;
+    *(cellPtr + youp + xoleft) -= 2;
+    *(cellPtr + youp) -= 2;
+    *(cellPtr + youp + xoright) -= 2;
+    *(cellPtr + xoleft) -= 2;
+    *(cellPtr + xoright) -= 2;
+    *(cellPtr + yodown + xoleft) -= 2;
+    *(cellPtr + yodown) -= 2;
+    *(cellPtr + yodown + xoright) -= 2;
+
+}
+
+unsigned char GOLBoard::cellState(int x, int y)
+{
+    unsigned char* cellPtr;
+    cellPtr = board + (y*w) + x;
+    return *(cellPtr) & 0x01;
+}
+
+unsigned char GOLBoard::countNeighbors(int x, int y)
+{
+    unsigned char* cellPtr;
+    cellPtr = board + (y*w) + x;
+    return *(cellPtr) >> 1;
+}
+
+void GOLBoard::step()
+{
+    unsigned int x, y, count;
+    unsigned char*  cellPtr;
+
+    memcpy(tempBoard, board, lengthB);
+
+    cellPtr = tempBoard;
+
+    for (y = 0; y < h; y++)
+    {
+nextRow:
+        x = 0;
+        while (x < w)
+        {
+            while (cellPtr == 0)
+            {
+                cellPtr++;
+                x++;
+                if (x >=w)
+                    goto nextRow;
+                    //wow, the only valid use for goto in c++; I never thought
+                    //I would see this day
+            }
+            //cell was not 0, need to compute
+            count = *cellPtr >> 1;
+            if (*cellPtr & 0x01)
+            {
+                //cell is on, kill it unless it has 2 or 3 neighbors
+                if ((count != 2) && (count !=3))
+                {
+                    clearCell(x, y);
+                }
+            }
+            else
+            {
+                //cell is off, bring it to life if it has 3 neighbors
+                if (count == 3)
+                {
+                    setCell(x, y);
+                }
+            }
+            cellPtr++;
+            x++;
+        }
+    }
+}
+
+void GOLBoard::init(int aliveChance)
+{
+    //init the board randomly according to the defined frequency
+    //probability is 1/aliveChance
+    unsigned char* cellPtr;
+    cellPtr = board;
+    memset(board, 0, lengthB);
+    memset(tempBoard, 0, lengthB);
+    for (int x = 0; x < w; x++)
+    {
+        for (int y = 0; y < h; y++)
+        {
+            if (random()%aliveChance == 0)
+            {
+                setCell(x, y);
+            }
+        }
+    }
+
+}
+
+int GOLBoard::getW()
+{
+    return w;
+}
+
+int GOLBoard::getH()
+{
+    return h;
 }
