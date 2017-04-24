@@ -13,11 +13,11 @@
 #define CELL_H 5
 #define CELL_W 5
 
-//how long to wait between each generation (microseconds)
-#define SIM_SPEED 30000
+//the speed to run at (FPS)
+#define FPS_RUN 30
 
 //how many generations to wait until we restart
-#define NEXT_AT 2000
+#define NEXT_AT 1500
 
 
 enum valid_colors {
@@ -106,17 +106,27 @@ int main()
     GOLBoard board(gridW, gridH);
     board.init(LIFE_CHANCE);
 
+    int timeWait = CLOCKS_PER_SEC / FPS_RUN;
+    clock_t now;
+    clock_t previous = clock();
+    
     while(1) 
     {
+        now = clock();
+        if ((now - previous) < timeWait)
+        {
+            usleep(timeWait - (now - previous));
+        }
+        previous = now;
+
         //draw a generation
         board.drawBoard(dpy, root, g, xcolors[liveColor], xcolors[0]);
         sprintf(counter, "Generation: %d", generation);
-        XSetForeground(dpy, g, xcolors[liveColor].pixel);
-        XDrawString(dpy, root, g, 50, 50, counter, strlen(counter));
+        //XSetForeground(dpy, g, xcolors[liveColor].pixel);
+        //XDrawString(dpy, root, g, 50, 50, counter, strlen(counter));
         generation++;
         XFlush(dpy);
         board.step();
-        usleep(SIM_SPEED);
 
         if (generation >= NEXT_AT) 
         {
