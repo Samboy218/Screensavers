@@ -6,7 +6,7 @@ installpath = /usr/lib/xscreensaver/
 all: $(modName)
     
 $(modName): $(sourceName) vroot.h
-	 g++ -o $(modName) $(sourceName) -L/usr/lib/x86_64-linux-gnu -lX11
+	 g++ -O2 -s -DNDEBUG -o $(modName) $(sourceName) -L/usr/lib/x86_64-linux-gnu -lX11
 
 .PHONY: clean
 clean:
@@ -22,4 +22,4 @@ uninstall:
 
 .PHONY: debug
 debug: $(sourceName) vroot.h
-	 g++ -o $(modName) $(sourceName) -L/usr/lib/x86_64-linux-gnu -lX11 -g
+	 g++ -o $(modName) $(sourceName) -L/usr/lib/x86_64-linux-gnu -lX11 -pg
