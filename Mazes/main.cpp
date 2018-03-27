@@ -1,5 +1,6 @@
 #include "maze.h"
 #include "nodeStack.h"
+#include "mazeSolver.h"
 #include <X11/Xlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -9,6 +10,7 @@
 
 #define MAZE_WIDTH 30
 #define MAZE_HEIGHT 30
+#define FPS_RUN 10
 
 enum valid_colors {
     COLOR_BLACK, COLOR_RED,
@@ -61,6 +63,37 @@ int main(int argc, char** argv) {
     my_maze->genMaze();
     valid_colors wallColor = COLOR_MAGENTA;
     valid_colors bgColor = COLOR_BLACK;
-    my_maze->drawXMaze(dpy, root, g, xcolors[wallColor], xcolors[bgColor]);
+    XColor draw_colors[5];
+    draw_colors[0] = xcolors[COLOR_BLACK];
+    draw_colors[1] = xcolors[COLOR_RED];
+    draw_colors[2] = xcolors[COLOR_MAGENTA];
+    draw_colors[3] = xcolors[COLOR_GREEN];
+    draw_colors[4] = xcolors[COLOR_CYAN];
+    MazeSolver* solver = new MazeSolver(my_maze);
+    //MazeSolver* solver;
+    my_maze->drawXMaze(dpy, root, g, draw_colors);
     XFlush(dpy);
+    int time_wait = CLOCKS_PER_SEC/FPS_RUN;
+    clock_t now;
+    clock_t previous = clock();
+    while (true) {
+        while (!solver->takeStep()) {
+            now = clock();
+            if ((now - previous) < time_wait) {
+                usleep(time_wait - (now - previous));
+            }
+            previous = now;
+
+            my_maze->drawXMaze(dpy, root, g, draw_colors);
+            //XFlush(dpy);
+        }
+
+        delete solver;
+        delete my_maze;
+        my_maze = new Maze(w, h);
+        my_maze->genMaze();
+        solver = new MazeSolver(my_maze);
+        sleep(3);
+    }
+    return 5;
 }

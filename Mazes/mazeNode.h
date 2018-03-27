@@ -6,7 +6,12 @@ class MazeNode {
     public:
         MazeNode();
         bool isVisited();
+        bool isSeen();
+        void see(bool val);
+        bool onStack();
+        void setOnStack(bool val);
         bool visit();
+        bool unvisit();
         bool hasWall(Direction dir);
         void removeWall(Direction  dir);
         int getX();
@@ -30,6 +35,7 @@ class MazeNode {
         uint8_t walls;
         bool visited;
         bool seen;
+        bool on_stack;
         int x;
         int y;
 };

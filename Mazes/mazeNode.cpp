@@ -3,6 +3,8 @@
 MazeNode::MazeNode() {
     walls = 0xFF;
     visited = false;
+    seen = false;
+    on_stack = false;
 }
 
 bool MazeNode::isVisited() {
@@ -10,9 +12,28 @@ bool MazeNode::isVisited() {
 }
 
 bool MazeNode::visit() {
-    if (visited) 
-        return false;
     visited = true;
+    return true;
+}
+
+bool MazeNode::isSeen() {
+    return seen;
+}
+
+void MazeNode::see(bool val) {
+    seen = val;
+}
+
+bool MazeNode::onStack() {
+    return on_stack;
+}
+
+void MazeNode::setOnStack(bool val) {
+    on_stack = val;
+}
+
+bool MazeNode::unvisit() {
+    visited = false;
     return true;
 }
 

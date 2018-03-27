@@ -12,14 +12,16 @@ class Maze {
         bool allVisited();
         bool visit(int x, int y);
         bool visit(MazeNode* node);
+        bool unvisit(MazeNode* node);
         bool removeWall(int x, int y, Direction dir);
         bool removeWall(int x1, int y1, int x2, int y2);
         MazeNode* getNode(int x, int y);
         void drawMaze();
-        void drawXMaze(Display *dpy, Window &root, GC &g, XColor wallColor, 
-                       XColor bgColor);
+        void drawXMaze(Display *dpy, Window &root, GC &g, XColor* colors);
         void toFile(char* filename);
         void genMaze();
+        int getH();
+        int getW();
 
     private:
         MazeNode** maze;

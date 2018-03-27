@@ -38,7 +38,21 @@ bool Maze::visit(int x, int y) {
 bool Maze::visit(MazeNode* node) {
     if (node == NULL)
         return false;
-    node->visit();
+    return node->visit();
+}
+
+bool Maze::unvisit(MazeNode* node) {
+    if (node == NULL)
+        return false;
+    return node->unvisit();
+}
+
+int Maze::getW() {
+    return w;
+}
+
+int Maze::getH() {
+    return h;
 }
 
 bool Maze::removeWall(int x, int y, Direction dir) {
@@ -316,11 +330,19 @@ void Maze::genMaze() {
     }
     getNode(0, 0)->removeWall(NORTH);
     getNode(w-1, h-1)->removeWall(SOUTH);
+    //now unvisit all nodes
+    for (int y = 0; y < h; y++) {
+        for (int x = 0; x < w; x++) {
+            getNode(x, y)->unvisit();
+        }
+    }
 }
 
-void Maze::drawXMaze(Display *dpy, Window &root, GC &g, XColor wallColor, 
-                     XColor bgColor) {
+void Maze::drawXMaze(Display *dpy, Window &root, GC &g, XColor* colors) {
     //go through each node, and draw it. easy
+    //colors is an array of xcolors where
+    //colors[0] = bgcolor, colors[1]=wall, colors[2]=seen, colors[3]=visited
+    //colors[4] = on stack
     XWindowAttributes wa;
     XGetWindowAttributes(dpy, root, &wa);
     int pixel_thick_x = (wa.width/w)/4;
@@ -336,15 +358,21 @@ void Maze::drawXMaze(Display *dpy, Window &root, GC &g, XColor wallColor,
             int curr_x = x*block_w;
             int curr_y = y*block_h;
             //draw a full rectangle, and then blank out the parts that are open
-            XSetForeground(dpy, g, wallColor.pixel);
+            XSetForeground(dpy, g, colors[1].pixel);
             XFillRectangle(dpy, root, g, 
                            curr_x, curr_y, block_w, block_h);
-            XSetForeground(dpy, g, bgColor.pixel);
-            if (curr->isVisited()) {
-                XFillRectangle(dpy, root, g,
-                            curr_x+pixel_thick_x, curr_y+pixel_thick_y,
-                            pixel_thick_x*2, pixel_thick_y*2);
-            }
+            if (curr->onStack())
+                XSetForeground(dpy, g, colors[4].pixel);
+            else if (curr->isVisited())
+                XSetForeground(dpy, g, colors[3].pixel);
+            else if (curr->isSeen())
+                XSetForeground(dpy, g, colors[2].pixel);
+            else
+                XSetForeground(dpy, g, colors[0].pixel);
+
+            XFillRectangle(dpy, root, g,
+                        curr_x+pixel_thick_x, curr_y+pixel_thick_y,
+                        pixel_thick_x*2, pixel_thick_y*2);
             walls = curr->getWalls();
             if (!(walls & 0x01)) {
                 XFillRectangle(dpy, root, g,
