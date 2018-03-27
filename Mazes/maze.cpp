@@ -1,9 +1,11 @@
 #include "maze.h"
 #include "stdio.h"
 
-Maze::Maze(int width, int height) {
+Maze::Maze(int width, int height, int draw_w, int draw_h) {
     w = width;
     h = height;
+    window_h = draw_h;
+    window_w = draw_w;
     maze = (MazeNode**)malloc(sizeof(MazeNode*)*w*h);
     //init all nodes
     int curr_ind = 0;
@@ -343,10 +345,8 @@ void Maze::drawXMaze(Display *dpy, Window &root, GC &g, XColor* colors) {
     //colors is an array of xcolors where
     //colors[0] = bgcolor, colors[1]=wall, colors[2]=seen, colors[3]=visited
     //colors[4] = on stack
-    XWindowAttributes wa;
-    XGetWindowAttributes(dpy, root, &wa);
-    int pixel_thick_x = (wa.width/w)/4;
-    int pixel_thick_y = (wa.height/h)/4;
+    int pixel_thick_x = (window_w/w)/4;
+    int pixel_thick_y = (window_h/h)/4;
     int block_w = pixel_thick_x * 4;
     int block_h = pixel_thick_y * 4;
     //printf("x:%d, y:%d\n", block_w*w, block_h*h);

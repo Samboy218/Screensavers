@@ -7,7 +7,7 @@
 #include <stdlib.h>
 class Maze {
     public:
-        Maze(int width, int height);
+        Maze(int width, int height, int draw_w, int draw_h);
         ~Maze();
         bool allVisited();
         bool visit(int x, int y);
@@ -17,7 +17,7 @@ class Maze {
         bool removeWall(int x1, int y1, int x2, int y2);
         MazeNode* getNode(int x, int y);
         void drawMaze();
-        void drawXMaze(Display *dpy, Window &root, GC &g, XColor* colors);
+        void drawXMaze(Display *dpy, Pixmap &root, GC &g, XColor* colors);
         void toFile(char* filename);
         void genMaze();
         int getH();
@@ -27,6 +27,8 @@ class Maze {
         MazeNode** maze;
         int w;
         int h;
+        int window_w;
+        int window_h;
 
 };
 

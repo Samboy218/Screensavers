@@ -10,7 +10,7 @@
 
 #define MAZE_WIDTH 30
 #define MAZE_HEIGHT 30
-#define FPS_RUN 10
+#define FPS_RUN 30
 
 enum valid_colors {
     COLOR_BLACK, COLOR_RED,
@@ -24,6 +24,7 @@ int main(int argc, char** argv) {
     Display* dpy;
     Window root;
     GC g;
+    Pixmap double_buffer;
     XWindowAttributes wa;
     const char* colors[NUM_COLORS] = {"rgb:1d/1f/21", "rgb:cc/66/66", 
                                     "rgb:b5/bd/68", "rgb:81/a2/be",
@@ -39,6 +40,7 @@ int main(int argc, char** argv) {
     XGetWindowAttributes(dpy, root, &wa);
     //create a graphical context
     g = XCreateGC(dpy, root, 0, NULL);
+    double_buffer = XCreatePixmap(dpy, root, wa.width, wa.height, wa.depth);
     //init colors
     for (int i = 0; i<NUM_COLORS; i++) 
     {
@@ -59,7 +61,7 @@ int main(int argc, char** argv) {
     h = height;
     //printf("Usage: %s <width> <height>\n", argv[0]);
     //exit(1);
-    Maze* my_maze = new Maze(w, h);
+    Maze* my_maze = new Maze(w, h, wa.width, wa.height);
     my_maze->genMaze();
     valid_colors wallColor = COLOR_MAGENTA;
     valid_colors bgColor = COLOR_BLACK;
@@ -84,13 +86,15 @@ int main(int argc, char** argv) {
             }
             previous = now;
 
-            my_maze->drawXMaze(dpy, root, g, draw_colors);
+            my_maze->drawXMaze(dpy, double_buffer, g, draw_colors);
             //XFlush(dpy);
+            XCopyArea(dpy, double_buffer, root, g, 0, 0, wa.width, wa.height, 0, 0);
+            XFlush(dpy);
         }
 
         delete solver;
         delete my_maze;
-        my_maze = new Maze(w, h);
+        my_maze = new Maze(w, h, wa.width, wa.height);
         my_maze->genMaze();
         solver = new MazeSolver(my_maze);
         sleep(3);
