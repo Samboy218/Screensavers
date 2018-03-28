@@ -63,27 +63,27 @@ bool Maze::removeWall(int x, int y, Direction dir) {
     Direction dir2;
     switch (dir) {
         case NORTH:
-            node2 = getNode(x, y+1);
+            node2 = getNode(x, y-1);
             dir2 = SOUTH;
             break;
         case NORTHWEST:
-            node2 = getNode(x-1, y+1);
+            node2 = getNode(x-1, y-1);
             dir2 = SOUTHEAST;
             break;
         case NORTHEAST:
-            node2 = getNode(x+1, y+1);
+            node2 = getNode(x+1, y-1);
             dir2 = SOUTHWEST;
             break;
         case SOUTH:
-            node2 = getNode(x, y-1);
+            node2 = getNode(x, y+1);
             dir2 = NORTH;
             break;
         case SOUTHWEST:
-            node2 = getNode(x-1, y-1);
+            node2 = getNode(x-1, y+1);
             dir2 = NORTHEAST;
             break;
         case SOUTHEAST:
-            node2 = getNode(x+1, y-1);
+            node2 = getNode(x+1, y+1);
             dir2 = NORTHWEST;
             break;
         case WEST:
@@ -328,6 +328,56 @@ void Maze::genMaze() {
             my_stack->push(next_node);
             curr_node = next_node;
             next_node = NULL;
+        }
+    }
+    //lets try to remove dead ends?
+    //if a node does not lie on the border, it must have at least 2 openings
+    for (int y = 1; y < h-1; y++) {
+        for (int x = 1; x < w; x++) {
+            curr_node = getNode(x, y);
+            uint8_t walls = curr_node->getWalls();
+            //find inverse hamming weight
+            uint8_t inverse = ~walls;
+            int num_open = 0;
+            while (inverse) {
+                num_open++;
+                inverse &= inverse-1;
+            }
+            if (num_open > 1)
+                continue;
+            //now break a random orthogonal wall
+            int to_break;
+            uint8_t break_mask;
+            while (1) {
+                to_break = (rand()%4) * 2;
+                //that should give you the correct bit to break
+                break_mask = 1 << to_break;
+                if (!(walls & to_break)) {
+                    //nice, we didn't choose an open wall
+                    break;
+                }
+            }
+            //to_break now has the wall we want to break
+            switch (to_break) {
+                case 0:
+                    //NORTH
+                    removeWall(x, y, NORTH);
+                    break;
+                case 2:
+                    //EAST
+                    removeWall(x, y, EAST);
+                    break;
+                case 4:
+                    //SOUTH
+                    removeWall(x, y, SOUTH);
+                    break;
+                case 6:
+                    //WEST
+                    removeWall(x, y, WEST);
+                    break;
+                default:
+                    printf("uhhh crap what do i break %d\n", to_break);
+            }
         }
     }
     getNode(0, 0)->removeWall(NORTH);
