@@ -26,9 +26,14 @@ int main(int argc, char** argv) {
     GC g;
     Pixmap double_buffer;
     XWindowAttributes wa;
-    const char* colors[NUM_COLORS] = {"rgb:1d/1f/21", "rgb:cc/66/66", 
-                                    "rgb:b5/bd/68", "rgb:81/a2/be",
-                                    "rgb:f0/c6/74", "rgb:b2/94/bb", 
+    //const char* colors[NUM_COLORS] = {"rgb:1d/1f/21", "rgb:cc/66/66", 
+    //                                "rgb:b5/bd/68", "rgb:81/a2/be",
+    //                                "rgb:f0/c6/74", "rgb:b2/94/bb", 
+    //                                "rgb:8a/be/b7", "rgb:c5/c8/c6"};
+
+     const char* colors[NUM_COLORS] = {"rgb:11/11/11", "rgb:cc/33/33", 
+                                    "rgb:33/cc/33", "rgb:33/33/cc",
+                                    "rgb:cc/cc/33", "rgb:b2/94/bb", 
                                     "rgb:8a/be/b7", "rgb:c5/c8/c6"};
     XColor xcolors[NUM_COLORS];
     XColor xc, sc;
@@ -68,9 +73,9 @@ int main(int argc, char** argv) {
     XColor draw_colors[5];
     draw_colors[0] = xcolors[COLOR_BLACK];
     draw_colors[1] = xcolors[COLOR_RED];
-    draw_colors[2] = xcolors[COLOR_MAGENTA];
-    draw_colors[3] = xcolors[COLOR_GREEN];
-    draw_colors[4] = xcolors[COLOR_CYAN];
+    draw_colors[2] = xcolors[COLOR_YELLOW];
+    draw_colors[3] = xcolors[COLOR_BLUE];
+    draw_colors[4] = xcolors[COLOR_GREEN];
     MazeSolver* solver = new MazeSolver(my_maze);
     //MazeSolver* solver;
     my_maze->drawXMaze(dpy, root, g, draw_colors);
