@@ -124,11 +124,11 @@ bool Maze::removeWall(int x1, int y1, int x2, int y2) {
         dir1 = NORTH;
         dir2 = SOUTH;
     }
-    else if (xdiff == 1 && ydiff == 1) {
+    else if (xdiff == -1 && ydiff == 1) {
         dir1 = NORTHEAST;
         dir2 = SOUTHWEST;
     }
-    else if (xdiff == -1 && ydiff == 1) {
+    else if (xdiff == 1 && ydiff == 1) {
         dir1 = NORTHWEST;
         dir2 = SOUTHEAST;
     }
@@ -136,19 +136,19 @@ bool Maze::removeWall(int x1, int y1, int x2, int y2) {
         dir1 = SOUTH;
         dir2 = NORTH;
     }
-    else if (xdiff == 1 && ydiff == -1) {
+    else if (xdiff == -1 && ydiff == -1) {
         dir1 = SOUTHEAST;
         dir2 = NORTHWEST;
     }
-    else if (xdiff == -1 && ydiff == -1) {
+    else if (xdiff == 1 && ydiff == -1) {
         dir1 = SOUTHWEST;
         dir2 = NORTHEAST;
     }
-    else if (xdiff == 1 && ydiff == 0) {
+    else if (xdiff == -1 && ydiff == 0) {
         dir1 = EAST;
         dir2 = WEST;
     }
-    else if (xdiff == -1 && ydiff == 0) {
+    else if (xdiff == 1 && ydiff == 0) {
         dir1 = WEST;
         dir2 = EAST;
     }
@@ -352,26 +352,26 @@ void Maze::genMaze() {
                 to_break = (rand()%4) * 2;
                 //that should give you the correct bit to break
                 break_mask = 1 << to_break;
-                if (!(walls & to_break)) {
+                if ((walls & break_mask)) {
                     //nice, we didn't choose an open wall
                     break;
                 }
             }
             //to_break now has the wall we want to break
-            switch (to_break) {
-                case 0:
+            switch (break_mask) {
+                case 0x01:
                     //NORTH
                     removeWall(x, y, NORTH);
                     break;
-                case 2:
+                case 0x04:
                     //EAST
                     removeWall(x, y, EAST);
                     break;
-                case 4:
+                case 0x10:
                     //SOUTH
                     removeWall(x, y, SOUTH);
                     break;
-                case 6:
+                case 0x40:
                     //WEST
                     removeWall(x, y, WEST);
                     break;
@@ -430,7 +430,7 @@ void Maze::drawXMaze(Display *dpy, Window &root, GC &g, XColor* colors) {
                             pixel_thick_x*2, pixel_thick_y);
             }
             //for some reason east and west get flipped...
-            if (!(walls & 0x40)) {
+            if (!(walls & 0x04)) {
                 XFillRectangle(dpy, root, g,
                             curr_x+pixel_thick_x*3, curr_y+pixel_thick_y,
                             pixel_thick_x, pixel_thick_y*2);
@@ -440,7 +440,7 @@ void Maze::drawXMaze(Display *dpy, Window &root, GC &g, XColor* colors) {
                             curr_x+pixel_thick_x, curr_y+pixel_thick_y*3,
                             pixel_thick_x*2, pixel_thick_y);
             }
-            if (!(walls & 0x04)) {
+            if (!(walls & 0x40)) {
                 XFillRectangle(dpy, root, g,
                             curr_x, curr_y+pixel_thick_y,
                             pixel_thick_x, pixel_thick_y*2);

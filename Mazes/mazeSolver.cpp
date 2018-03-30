@@ -25,7 +25,7 @@ bool MazeSolver::takeStep() {
     if (!(walls & 0x02) && temp_node)
         temp_node->see(true);
     temp_node = toSolve->getNode(curr_x+1, curr_y);
-    if (!(walls & 0x40) && temp_node)
+    if (!(walls & 0x04) && temp_node)
         temp_node->see(true);
     temp_node = toSolve->getNode(curr_x+1, curr_y+1);
     if (!(walls & 0x08) && temp_node)
@@ -37,7 +37,7 @@ bool MazeSolver::takeStep() {
     if (!(walls & 0x20) && temp_node)
         temp_node->see(true);
     temp_node = toSolve->getNode(curr_x-1, curr_y);
-    if (!(walls & 0x04) && temp_node)
+    if (!(walls & 0x40) && temp_node)
         temp_node->see(true);
     temp_node = toSolve->getNode(curr_x-1, curr_y-1);
     if (!(walls & 0x80) && temp_node)
@@ -68,7 +68,7 @@ bool MazeSolver::takeStep() {
         }
     }
     temp_node = toSolve->getNode(curr_x+1, curr_y);
-    if (!(walls & 0x40) && temp_node) {
+    if (!(walls & 0x04) && temp_node) {
         if (!temp_node->isVisited()){
             temp_node->visit();
             temp_node->setOnStack(true);
@@ -110,7 +110,7 @@ bool MazeSolver::takeStep() {
         }
     }
     temp_node = toSolve->getNode(curr_x-1, curr_y);
-    if (!(walls & 0x04) && temp_node) {
+    if (!(walls & 0x40) && temp_node) {
         if (!temp_node->isVisited()){
             temp_node->visit();
             temp_node->setOnStack(true);
