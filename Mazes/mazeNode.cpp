@@ -64,6 +64,38 @@ void MazeNode::setY(int val) {
     y = val;
 }
 
+Direction MazeNode::getParent() {
+    return parent;
+}
+
+void MazeNode::setParent(Direction val) {
+    parent = val;
+}
+
+int MazeNode::getF() {
+    return f;
+}
+
+void MazeNode::setF(int val) {
+    f = val;
+}
+
+int MazeNode::getH() {
+    return h;
+}
+
+void MazeNode::setH(int val) {
+    h = val;
+}
+
+int MazeNode::getG() {
+    return g;
+}
+
+void MazeNode::setG(int val) {
+    g = val;
+}
+
 uint8_t MazeNode::getWalls() {
     return walls;
 }

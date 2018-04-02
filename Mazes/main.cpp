@@ -1,6 +1,7 @@
 #include "maze.h"
 #include "nodeStack.h"
 #include "mazeSolver.h"
+#include "mazeSolverA.h"
 #include <X11/Xlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -76,7 +77,8 @@ int main(int argc, char** argv) {
     draw_colors[2] = xcolors[COLOR_YELLOW];
     draw_colors[3] = xcolors[COLOR_BLUE];
     draw_colors[4] = xcolors[COLOR_GREEN];
-    MazeSolver* solver = new MazeSolver(my_maze);
+    //MazeSolver* solver = new MazeSolver(my_maze);
+    MazeSolverA* solver = new MazeSolverA(my_maze);
     //MazeSolver* solver;
     my_maze->drawXMaze(dpy, root, g, draw_colors);
     XFlush(dpy);
@@ -96,12 +98,15 @@ int main(int argc, char** argv) {
             XCopyArea(dpy, double_buffer, root, g, 0, 0, wa.width, wa.height, 0, 0);
             XFlush(dpy);
         }
+        my_maze->drawXMaze(dpy, double_buffer, g, draw_colors);
+        XCopyArea(dpy, double_buffer, root, g, 0, 0, wa.width, wa.height, 0, 0);
+        XFlush(dpy);
 
         delete solver;
         delete my_maze;
         my_maze = new Maze(w, h, wa.width, wa.height);
         my_maze->genMaze();
-        solver = new MazeSolver(my_maze);
+        solver = new MazeSolverA(my_maze);
         sleep(3);
     }
     return 5;

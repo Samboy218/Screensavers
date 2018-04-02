@@ -2,8 +2,8 @@ installpath = /usr/lib/xscreensaver
 
 all: mymaze
 
-mymaze: main.o maze.o mazeNode.o nodeStack.o mazeSolver.o
-	g++ -o mymaze main.o maze.o mazeNode.o nodeStack.o mazeSolver.o -L/usr/lib/x86_64-linux-gnu -lX11
+mymaze: main.o maze.o mazeNode.o nodeStack.o mazeSolver.o mazeSolverA.o
+	g++ -o mymaze main.o maze.o mazeNode.o nodeStack.o mazeSolver.o mazeSolverA.o -L/usr/lib/x86_64-linux-gnu -lX11
 
 main.o: main.cpp
 	g++ -c -o main.o main.cpp
@@ -20,6 +20,9 @@ nodeStack.o: nodeStack.cpp nodeStack.h
 mazeSolver.o: maze.o mazeSolver.h mazeSolver.cpp
 	g++ -c -o mazeSolver.o mazeSolver.cpp
 
+mazeSolverA.o: maze.o mazeSolverA.h mazeSolverA.cpp
+	g++ -c -o mazeSolverA.o mazeSolverA.cpp
+
 .PHONY: debug
 debug: *.cpp *.h
 	g++ -c -o nodeStack.o nodeStack.cpp -g -g -lefence
@@ -27,7 +30,8 @@ debug: *.cpp *.h
 	g++ -c -o maze.o maze.cpp -g -lefence
 	g++ -c -o main.o main.cpp -g -lefence
 	g++ -c -o mazeSolver.o mazeSolver.cpp -g -lefence
-	g++ -o mymaze main.o maze.o mazeNode.o nodeStack.o mazeSolver.o -g -lefence -L/usr/lib/x86_64-linux-gnu -lX11
+	g++ -c -o mazeSolverA.o mazeSolverA.cpp -g -lefence
+	g++ -o mymaze main.o maze.o mazeNode.o nodeStack.o mazeSolver.o mazeSolverA.o -g -lefence -L/usr/lib/x86_64-linux-gnu -lX11
 .PHONY:clean
 clean:
 	rm -rf *.o

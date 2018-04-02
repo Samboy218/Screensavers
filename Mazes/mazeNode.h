@@ -1,7 +1,7 @@
 #ifndef MAZE_NODE_H
 #define MAZE_NODE_H
 #include <stdint.h>
-enum Direction {NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NORTHWEST} ;
+enum Direction {NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NORTHWEST, DIRECTION_NONE} ;
 class MazeNode {
     public:
         MazeNode();
@@ -18,6 +18,14 @@ class MazeNode {
         int getY();
         void setX(int val);
         void setY(int val);
+        Direction getParent();
+        void setParent(Direction dir);
+        int getF();
+        int getH();
+        int getG();
+        void setF(int val);
+        void setH(int val);
+        void setG(int val);
         uint8_t getWalls();
 
 
@@ -33,6 +41,11 @@ class MazeNode {
         //0x40 is W
         //0x80 is NW
         uint8_t walls;
+        //used for A*
+        Direction parent;
+        int f;
+        int h;
+        int g;
         bool visited;
         bool seen;
         bool on_stack;
