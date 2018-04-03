@@ -171,29 +171,27 @@ void MazeSolverA::paintPath(MazeNode* node) {
         return;
     MazeNode* curr = node;
     MazeNode* parent;
-    int x;
-    int y;
+    int x = curr->getX();
+    int y = curr->getY();
 
     while (curr) {
         curr->setOnStack(true);
-        x = curr->getX();
-        y = curr->getY();
-        switch (node->getParent()) {
+        switch (curr->getParent()) {
             case NORTH:
-                parent = toSolve->getNode(x, y-1);
+                y--;
                 break;
             case EAST:
-                parent = toSolve->getNode(x+1, y);
+                x++;
                 break;
             case SOUTH:
-                parent = toSolve->getNode(x, y+1);
+                y++;
                 break;
             case WEST:
-                parent = toSolve->getNode(x-1, y);
+                x--;
                 break;
             default:
-                parent = NULL;
+                return;
         }
-        curr = parent;
+        curr = toSolve->getNode(x, y);
     }
 }
