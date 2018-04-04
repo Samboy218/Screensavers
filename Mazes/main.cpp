@@ -1,7 +1,6 @@
-#include "maze.h"
-#include "nodeStack.h"
-#include "mazeSolver.h"
+//#include "nodeStack.h"
 #include "mazeSolverA.h"
+#include "mazeSolverDFS.h"
 #include <X11/Xlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -78,8 +77,9 @@ int main(int argc, char** argv) {
     draw_colors[3] = xcolors[COLOR_BLUE];
     draw_colors[4] = xcolors[COLOR_GREEN];
     //MazeSolver* solver = new MazeSolver(my_maze);
-    MazeSolverA* solver = new MazeSolverA(my_maze);
-    //MazeSolver* solver;
+    //MazeSolverA* solver = new MazeSolverA(my_maze);
+    MazeSolver* solver;
+    solver = new MazeSolverDFS(my_maze);
     my_maze->drawXMaze(dpy, root, g, draw_colors);
     XFlush(dpy);
     int time_wait = CLOCKS_PER_SEC/FPS_RUN;

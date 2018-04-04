@@ -1,7 +1,6 @@
 #include "mazeSolverA.h"
 
-MazeSolverA::MazeSolverA(Maze* maze) {
-    toSolve = maze;
+MazeSolverA::MazeSolverA(Maze* maze) : MazeSolver(maze) {
     curr_x = 0;
     curr_y = 0;
     MazeNode* start = toSolve->getNode(curr_x, curr_y);

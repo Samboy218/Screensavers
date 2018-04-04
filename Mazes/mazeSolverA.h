@@ -1,19 +1,18 @@
 #ifndef MAZE_SOLVER_A_H
 #define MAZE_SOLVER_A_H
 
-#include "maze.h"
-#include "mazeNode.h"
+#include "mazeSolver.h"
 #include <algorithm>
 #include <stdio.h>
 #include <vector>
 
-class MazeSolverA {
+class MazeSolverA : public MazeSolver {
     public:
         MazeSolverA(Maze* maze);
-        bool takeStep();
+        virtual bool takeStep();
 
     private:
-        Maze* toSolve;
+        //Maze* toSolve;
         std::vector<MazeNode*>* open;
         std::vector<MazeNode*>* closed;
         int getG(MazeNode* node);

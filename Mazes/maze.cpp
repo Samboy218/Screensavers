@@ -1,5 +1,5 @@
 #include "maze.h"
-#include "stdio.h"
+#include <stdio.h>
 
 Maze::Maze(int width, int height, int draw_w, int draw_h) {
     w = width;
