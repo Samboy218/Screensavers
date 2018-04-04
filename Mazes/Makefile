@@ -34,7 +34,8 @@ debug: *.cpp *.h
 	g++ -c -o main.o main.cpp -g -lefence
 	g++ -c -o mazeSolver.o mazeSolver.cpp -g -lefence
 	g++ -c -o mazeSolverA.o mazeSolverA.cpp -g -lefence
-	g++ -o mymaze main.o maze.o mazeNode.o nodeStack.o mazeSolver.o mazeSolverA.o -g -lefence -L/usr/lib/x86_64-linux-gnu -lX11
+	g++ -c -o mazeSolverDFS.o mazeSolverDFS.cpp -g -lefence
+	g++ -o mymaze main.o maze.o mazeNode.o nodeStack.o mazeSolver.o mazeSolverA.o mazeSolverDFS.o -g -lefence -L/usr/lib/x86_64-linux-gnu -lX11
 
 .PHONY:clean
 clean:

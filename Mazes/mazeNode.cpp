@@ -5,6 +5,25 @@ MazeNode::MazeNode() {
     visited = false;
     seen = false;
     on_stack = false;
+    parent = DIRECTION_NONE;
+    f = 0;
+    h = 0;
+    g = 0;
+    x = 0;
+    y = 0;
+}
+
+MazeNode::MazeNode(MazeNode* toCopy) {
+    walls = toCopy->getWalls();
+    visited = toCopy->isVisited();
+    seen = toCopy->isSeen();
+    on_stack = toCopy->onStack();
+    parent = toCopy->getParent();
+    f = toCopy->getF();
+    h = toCopy->getH();
+    g = toCopy->getG();
+    x = toCopy->getX();
+    y = toCopy->getY();
 }
 
 bool MazeNode::isVisited() {

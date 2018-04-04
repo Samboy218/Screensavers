@@ -5,9 +5,11 @@
 #include "nodeStack.h"
 #include <X11/Xlib.h>
 #include <stdlib.h>
+
 class Maze {
     public:
         Maze(int width, int height, int draw_w, int draw_h);
+        Maze(Maze* toCopy);
         ~Maze();
         bool allVisited();
         bool visit(int x, int y);
@@ -22,6 +24,8 @@ class Maze {
         void genMaze();
         int getH();
         int getW();
+        int getWinH();
+        int getWinW();
 
     private:
         MazeNode** maze;

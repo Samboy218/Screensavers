@@ -19,6 +19,21 @@ Maze::Maze(int width, int height, int draw_w, int draw_h) {
     }
 }
 
+Maze::Maze(Maze* toCopy) {
+    w = toCopy->getW();
+    h = toCopy->getH();
+    window_w = toCopy->getWinW();
+    window_h = toCopy->getWinH();
+    maze = (MazeNode**)malloc(sizeof(MazeNode*)*w*h);
+    int curr_ind = 0;
+    for (int y = 0; y < h; y++) {
+        for (int x = 0; x < w; x++) {
+            maze[curr_ind] = new MazeNode(toCopy->getNode(x, y));
+            curr_ind++;
+        }
+    }
+}
+
 Maze::~Maze() {
     for (int i = 0; i < w*h; i++) {
         delete maze[i];
@@ -55,6 +70,14 @@ int Maze::getW() {
 
 int Maze::getH() {
     return h;
+}
+
+int Maze::getWinW() {
+    return window_w;
+}
+
+int Maze::getWinH() {
+    return window_h;
 }
 
 bool Maze::removeWall(int x, int y, Direction dir) {

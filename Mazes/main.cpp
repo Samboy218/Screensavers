@@ -25,7 +25,8 @@ int main(int argc, char** argv) {
     Display* dpy;
     Window root;
     GC g;
-    Pixmap double_buffer;
+    Pixmap double_buffer_1;
+    Pixmap double_buffer_2;
     XWindowAttributes wa;
     //const char* colors[NUM_COLORS] = {"rgb:1d/1f/21", "rgb:cc/66/66", 
     //                                "rgb:b5/bd/68", "rgb:81/a2/be",
@@ -46,7 +47,8 @@ int main(int argc, char** argv) {
     XGetWindowAttributes(dpy, root, &wa);
     //create a graphical context
     g = XCreateGC(dpy, root, 0, NULL);
-    double_buffer = XCreatePixmap(dpy, root, wa.width, wa.height, wa.depth);
+    double_buffer_1 = XCreatePixmap(dpy, root, wa.width/2, wa.height, wa.depth);
+    double_buffer_2 = XCreatePixmap(dpy, root, wa.width/2, wa.height, wa.depth);
     //init colors
     for (int i = 0; i<NUM_COLORS; i++) 
     {
@@ -56,60 +58,70 @@ int main(int argc, char** argv) {
                         &sc, &xc);
         xcolors[i] = sc;
     }
-    //set foreground color
-    XSetForeground(dpy, g, WhitePixelOfScreen(DefaultScreenOfDisplay(dpy)));
 
-    int w, h;
-    srand(clock());
-    int width = (wa.width/16);
-    int height = (wa.height/16);
-    w = width;
-    h = height;
-    Maze* my_maze = new Maze(w, h, wa.width, wa.height);
-    my_maze->genMaze();
-    valid_colors wallColor = COLOR_MAGENTA;
-    valid_colors bgColor = COLOR_BLACK;
     XColor draw_colors[5];
     draw_colors[0] = xcolors[COLOR_BLACK];
     draw_colors[1] = xcolors[COLOR_RED];
     draw_colors[2] = xcolors[COLOR_YELLOW];
     draw_colors[3] = xcolors[COLOR_BLUE];
     draw_colors[4] = xcolors[COLOR_GREEN];
-    MazeSolver* solver;
-    if (rand() % 2)
-        solver = new MazeSolverA(my_maze);
-    else
-        solver = new MazeSolverDFS(my_maze);
-    my_maze->drawXMaze(dpy, root, g, draw_colors);
-    XFlush(dpy);
+
+
+    //set foreground color
+    XSetForeground(dpy, g, WhitePixelOfScreen(DefaultScreenOfDisplay(dpy)));
+
+    int w, h;
+    srand(clock());
+    int width = (wa.width/32);
+    int height = (wa.height/16);
+    w = width;
+    h = height;
+    Maze* my_maze = new Maze(w, h, wa.width/2, wa.height);
+    my_maze->genMaze();
+
+    Maze* maze_1 = new Maze(my_maze);
+    MazeSolver* solver_1;
+    solver_1 = new MazeSolverA(maze_1);
+
+    Maze* maze_2 = new Maze(my_maze);
+    MazeSolver* solver_2;
+    solver_2 = new MazeSolverDFS(maze_2);
+
     int time_wait = CLOCKS_PER_SEC/FPS_RUN;
     clock_t now;
     clock_t previous = clock();
     while (true) {
-        while (!solver->takeStep()) {
+        while (!(solver_1->takeStep() & solver_2->takeStep())) {
             now = clock();
             if ((now - previous) < time_wait) {
                 usleep(time_wait - (now - previous));
             }
             previous = now;
 
-            my_maze->drawXMaze(dpy, double_buffer, g, draw_colors);
-            //XFlush(dpy);
-            XCopyArea(dpy, double_buffer, root, g, 0, 0, wa.width, wa.height, 0, 0);
+            maze_1->drawXMaze(dpy, double_buffer_1, g, draw_colors);
+            maze_2->drawXMaze(dpy, double_buffer_2, g, draw_colors);
+            XCopyArea(dpy, double_buffer_1, root, g, 0, 0, wa.width/2, wa.height, 0, 0);
+            XCopyArea(dpy, double_buffer_2, root, g, 0, 0, wa.width/2, wa.height, wa.width/2, 0);
             XFlush(dpy);
         }
-        my_maze->drawXMaze(dpy, double_buffer, g, draw_colors);
-        XCopyArea(dpy, double_buffer, root, g, 0, 0, wa.width, wa.height, 0, 0);
+        maze_1->drawXMaze(dpy, double_buffer_1, g, draw_colors);
+        maze_2->drawXMaze(dpy, double_buffer_2, g, draw_colors);
+        XCopyArea(dpy, double_buffer_1, root, g, 0, 0, wa.width/2, wa.height, 0, 0);
+        XCopyArea(dpy, double_buffer_2, root, g, 0, 0, wa.width/2, wa.height, wa.width/2, 0);
         XFlush(dpy);
 
-        delete solver;
+        delete solver_1;
+        delete solver_2;
         delete my_maze;
-        my_maze = new Maze(w, h, wa.width, wa.height);
+        delete maze_1;
+        delete maze_2;
+        my_maze = new Maze(w, h, wa.width/2, wa.height);
         my_maze->genMaze();
-        if (rand() % 2)
-            solver = new MazeSolverA(my_maze);
-        else
-            solver = new MazeSolverDFS(my_maze);
+        maze_1 = new Maze(my_maze);
+        maze_2 = new Maze(my_maze);
+        solver_1 = new MazeSolverA(maze_1);
+        solver_2 = new MazeSolverDFS(maze_2);
+
         sleep(3);
     }
     return 5;

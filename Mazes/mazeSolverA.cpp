@@ -23,6 +23,8 @@ bool MazeSolverA::takeStep() {
         //if in closed, ignore it
         //if in open list, check if the F score from current square is better
         //if not in open, add it and compute its scores
+
+
     if (open->size() == 0)
         return true;
     if (curr_x == toSolve->getW()-1 && curr_y == toSolve->getH()-1)

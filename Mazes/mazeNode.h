@@ -5,6 +5,7 @@ enum Direction {NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NORTH
 class MazeNode {
     public:
         MazeNode();
+        MazeNode(MazeNode* toCopy);
         bool isVisited();
         bool isSeen();
         void see(bool val);
