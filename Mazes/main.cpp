@@ -21,6 +21,7 @@ enum valid_colors {
 };
 
 int main(int argc, char** argv) {
+    srand(clock());
     Display* dpy;
     Window root;
     GC g;
@@ -64,8 +65,6 @@ int main(int argc, char** argv) {
     int height = (wa.height/16);
     w = width;
     h = height;
-    //printf("Usage: %s <width> <height>\n", argv[0]);
-    //exit(1);
     Maze* my_maze = new Maze(w, h, wa.width, wa.height);
     my_maze->genMaze();
     valid_colors wallColor = COLOR_MAGENTA;
@@ -76,10 +75,11 @@ int main(int argc, char** argv) {
     draw_colors[2] = xcolors[COLOR_YELLOW];
     draw_colors[3] = xcolors[COLOR_BLUE];
     draw_colors[4] = xcolors[COLOR_GREEN];
-    //MazeSolver* solver = new MazeSolver(my_maze);
-    //MazeSolverA* solver = new MazeSolverA(my_maze);
     MazeSolver* solver;
-    solver = new MazeSolverDFS(my_maze);
+    if (rand() % 2)
+        solver = new MazeSolverA(my_maze);
+    else
+        solver = new MazeSolverDFS(my_maze);
     my_maze->drawXMaze(dpy, root, g, draw_colors);
     XFlush(dpy);
     int time_wait = CLOCKS_PER_SEC/FPS_RUN;
@@ -106,7 +106,10 @@ int main(int argc, char** argv) {
         delete my_maze;
         my_maze = new Maze(w, h, wa.width, wa.height);
         my_maze->genMaze();
-        solver = new MazeSolverA(my_maze);
+        if (rand() % 2)
+            solver = new MazeSolverA(my_maze);
+        else
+            solver = new MazeSolverDFS(my_maze);
         sleep(3);
     }
     return 5;
