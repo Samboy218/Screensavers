@@ -2,8 +2,8 @@ installpath = /usr/lib/xscreensaver
 
 all: mymaze
 
-mymaze: main.o maze.o mazeNode.o nodeStack.o mazeSolver.o mazeSolverDFS.o mazeSolverA.o
-	g++ -o mymaze main.o maze.o mazeNode.o nodeStack.o mazeSolver.o mazeSolverDFS.o mazeSolverA.o -L/usr/lib/x86_64-linux-gnu -lX11
+mymaze: main.o maze.o mazeNode.o nodeStack.o nodeQueue.o mazeSolver.o mazeSolverDFS.o mazeSolverBFS.o mazeSolverA.o
+	g++ -o mymaze main.o maze.o mazeNode.o nodeStack.o nodeQueue.o mazeSolver.o mazeSolverDFS.o mazeSolverBFS.o mazeSolverA.o -L/usr/lib/x86_64-linux-gnu -lX11
 
 main.o: main.cpp
 	g++ -c -o main.o main.cpp
@@ -17,11 +17,17 @@ mazeNode.o: mazeNode.cpp mazeNode.h
 nodeStack.o: nodeStack.cpp nodeStack.h
 	g++ -c -o nodeStack.o nodeStack.cpp
 
+nodeQueue.o: nodeQueue.cpp nodeQueue.h
+	g++ -c -o nodeQueue.o nodeQueue.cpp
+
 mazeSolver.o: maze.o mazeSolver.h mazeSolver.cpp
 	g++ -c -o mazeSolver.o mazeSolver.cpp
 
 mazeSolverDFS.o: maze.o mazeSolver.o mazeSolverDFS.h mazeSolverDFS.cpp
 	g++ -c -o mazeSolverDFS.o mazeSolverDFS.cpp
+
+mazeSolverBFS.o: maze.o mazeSolver.o mazeSolverBFS.h mazeSolverBFS.cpp
+	g++ -c -o mazeSolverBFS.o mazeSolverBFS.cpp
 
 mazeSolverA.o: maze.o mazeSolver.o nodeStack.o mazeSolverA.h mazeSolverA.cpp
 	g++ -c -o mazeSolverA.o mazeSolverA.cpp
@@ -29,13 +35,15 @@ mazeSolverA.o: maze.o mazeSolver.o nodeStack.o mazeSolverA.h mazeSolverA.cpp
 .PHONY: debug
 debug: *.cpp *.h
 	g++ -c -o nodeStack.o nodeStack.cpp -g -g -lefence
+	g++ -c -o nodeQueue.o nodeQueue.cpp -g -g -lefence
 	g++ -c -o mazeNode.o mazeNode.cpp -g -lefence
 	g++ -c -o maze.o maze.cpp -g -lefence
 	g++ -c -o main.o main.cpp -g -lefence
 	g++ -c -o mazeSolver.o mazeSolver.cpp -g -lefence
 	g++ -c -o mazeSolverA.o mazeSolverA.cpp -g -lefence
 	g++ -c -o mazeSolverDFS.o mazeSolverDFS.cpp -g -lefence
-	g++ -o mymaze main.o maze.o mazeNode.o nodeStack.o mazeSolver.o mazeSolverA.o mazeSolverDFS.o -g -lefence -L/usr/lib/x86_64-linux-gnu -lX11
+	g++ -c -o mazeSolverBFS.o mazeSolverBFS.cpp -g -lefence
+	g++ -o mymaze main.o maze.o mazeNode.o nodeStack.o nodeQueue.o mazeSolver.o mazeSolverA.o mazeSolverDFS.o mazeSolverBFS.o -g -lefence -L/usr/lib/x86_64-linux-gnu -lX11
 
 .PHONY:clean
 clean:

@@ -1,6 +1,5 @@
 #include "mazeSolverDFS.h"
 
-
 MazeSolverDFS::MazeSolverDFS(Maze* maze):MazeSolver(maze) {
     curr_x = 0;
     curr_y = 0;

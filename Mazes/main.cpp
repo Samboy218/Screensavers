@@ -1,6 +1,7 @@
 //#include "nodeStack.h"
 #include "mazeSolverA.h"
 #include "mazeSolverDFS.h"
+#include "mazeSolverBFS.h"
 #include <X11/Xlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -81,7 +82,8 @@ int main(int argc, char** argv) {
 
     Maze* maze_1 = new Maze(my_maze);
     MazeSolver* solver_1;
-    solver_1 = new MazeSolverA(maze_1);
+    //solver_1 = new MazeSolverA(maze_1);
+    solver_1 = new MazeSolverBFS(maze_1);
 
     Maze* maze_2 = new Maze(my_maze);
     MazeSolver* solver_2;
