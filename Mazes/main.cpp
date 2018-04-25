@@ -87,7 +87,7 @@ int main(int argc, char** argv) {
 
     Maze* maze_2 = new Maze(my_maze);
     MazeSolver* solver_2;
-    solver_2 = new MazeSolverDFS(maze_2);
+    solver_2 = new MazeSolverA(maze_2);
 
     int time_wait = CLOCKS_PER_SEC/FPS_RUN;
     clock_t now;

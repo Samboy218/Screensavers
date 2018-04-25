@@ -12,6 +12,7 @@ class MazeSolverBFS : public MazeSolver {
         NodeQueue* queue;
         int curr_x;
         int curr_y;
+        void paintPath(MazeNode* node);
 };
 
 #endif
