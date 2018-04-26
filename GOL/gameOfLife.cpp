@@ -7,7 +7,7 @@
 #include "vroot.h"
 
 // 1/LIFE_CHANCE is the probability a cell will begin with life
-#define LIFE_CHANCE 3
+#define LIFE_CHANCE 5
 
 // the size, in pixels, of each cell
 #define CELL_H 5
@@ -99,6 +99,7 @@ int main()
     //init GOL
     int gridW = wa.width/CELL_W;
     int gridH = wa.height/CELL_H;
+    //printf("w: %d, h: %d\n", wa.width, wa.height);
 
 
     int liveColor = (random()%(NUM_COLORS-1)) + 1; 
@@ -109,12 +110,14 @@ int main()
     int timeWait = CLOCKS_PER_SEC / FPS_RUN;
     clock_t now;
     clock_t previous = clock();
+
     
     while(1) 
     {
         now = clock();
         if ((now - previous) < timeWait)
         {
+            //printf("had to wait %d us at gen %d\n", timeWait-(now-previous), generation);
             usleep(timeWait - (now - previous));
         }
         previous = now;
