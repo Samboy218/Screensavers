@@ -1,10 +1,12 @@
 #ifndef FACTION_H
 #define FACTION_H
 
+#include <stdlib.h>
+#include <vector>
+#include <algorithm>
 class Faction {
     public:
-    Faction(int fac_id);
-    ~Faction();
+    void init(int fac_id);
 
     unsigned char id;
     //determines who goes first
@@ -16,6 +18,13 @@ class Faction {
     unsigned int armor;
     //max health
     unsigned int health;
+
+    //functions to get values
+    unsigned int getSpeed();
+    unsigned int getStrength();
+    unsigned int getAccuracy();
+    unsigned int getArmor();
+    unsigned int getHealth();
 };
 
 #endif

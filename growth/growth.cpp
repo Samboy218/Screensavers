@@ -6,6 +6,8 @@
 #include <string.h>
 #include "vroot.h"
 
+#include "board.h"
+
 //have some number of competing blobs of growth
 //each blob is a different color
 //each blob has different characteristics
@@ -15,8 +17,9 @@
 //when the board is all one color, restart
 
 // the size, in pixels, of each cell
-#define CELL_H 5
-#define CELL_W 5
+#define CELL_HEIGHT 10
+#define CELL_WIDTH 10
+#define NUM_FACTION 5
 
 //the speed to run at (FPS)
 #define FPS_RUN 30
@@ -75,47 +78,45 @@ int main()
 
     //now we can make art
     //init GOL
-    int gridW = wa.width/CELL_W;
-    int gridH = wa.height/CELL_H;
+    int gridW = wa.width/CELL_WIDTH;
+    int gridH = wa.height/CELL_HEIGHT;
     //printf("w: %d, h: %d\n", wa.width, wa.height);
 
 
     int liveColor = (rand()%(NUM_COLORS-1)) + 1; 
 
-    Board board(gridW, gridH);
-    board.init(LIFE_CHANCE);
+    Board board(gridW, gridH, NUM_FACTION, CELL_WIDTH, CELL_HEIGHT, xcolors);
+    board.init();
 
     int timeWait = CLOCKS_PER_SEC / FPS_RUN;
     clock_t now;
     clock_t previous = clock();
-
-    
-    while(1) 
+    bool cont;
+    while(generation < 10000) 
     {
         now = clock();
         if ((now - previous) < timeWait)
         {
             //printf("had to wait %d us at gen %d\n", timeWait-(now-previous), generation);
-            usleep(timeWait - (now - previous));
+            //usleep(timeWait - (now - previous));
         }
         previous = now;
 
         //draw a generation
-        board.drawBoard(dpy, root, g, xcolors[liveColor], xcolors[0]);
+        board.drawBoard(dpy, root, g);
         sprintf(counter, "Generation: %d", generation);
         //XSetForeground(dpy, g, xcolors[liveColor].pixel);
         //XDrawString(dpy, root, g, 50, 50, counter, strlen(counter));
         generation++;
         XFlush(dpy);
-        board.step();
-
-        if (generation >= NEXT_AT) 
-        {
-            board.init(LIFE_CHANCE);
-            generation = 0;
-            liveColor = (rand()%(NUM_COLORS-1)) + 1; 
+        cont = true;
+        //process moves until we are done with this time step
+        while(cont) {
+            cont = board.step(generation);
         }
+        generation++;
     }
+    return 0;
 }
 
  
