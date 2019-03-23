@@ -17,12 +17,12 @@
 //when the board is all one color, restart
 
 // the size, in pixels, of each cell
-#define CELL_HEIGHT 10
-#define CELL_WIDTH 10
+#define CELL_HEIGHT 20
+#define CELL_WIDTH 20
 #define NUM_FACTION 7
 
 //the speed to run at (FPS)
-#define FPS_RUN 30
+#define FPS_RUN 60
 
 enum valid_colors {
     COLOR_BLACK, COLOR_RED,
@@ -93,7 +93,7 @@ int main()
     clock_t now;
     clock_t previous = clock();
     bool cont;
-    while(1) 
+    while(generation < 100000) 
     {
         now = clock();
         if ((now - previous) < timeWait)
