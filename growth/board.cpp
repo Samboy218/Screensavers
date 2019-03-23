@@ -40,10 +40,12 @@ void Board::init()
     int interval = w/factions.size();
     for (int i = 0; i < factions.size(); i++) {
         factions.at(i).init(i);
-        int start_x = (rand()%interval) + (interval * i);
-        int start_y = rand()%h;
-        setCell(start_x, start_y, i, 0);
-        printf("faction %d speed: %d\n", i, factions.at(i).speed);
+        for (int j = 0; j < 3; j++) {
+            int start_x = (rand()%interval) + (interval * i);
+            int start_y = (rand()%(h/3)) + (j * h/3);
+
+            setCell(start_x, start_y, i, 0);
+        }
     }
 }
 
@@ -71,7 +73,23 @@ void Board::drawBoard(Display *dpy, Window &root, GC &g)
     }
 }
 
-//TODO
+void Board::drawBoard(Display *dpy, Window &root, GC &g, int x, int y)
+{
+    //only draw the neighbors of the passed in cell
+    for (int i = x-1; i < x+2; i++) {
+        if (i < 0 || i >= w)
+            continue;
+        for (int j = y-1; j < y+2; j++) {
+            if (j < 0 || j >= h)
+                continue;
+            int fac = board.at(i).at(j).faction_id;
+            XSetForeground(dpy, g, colors[fac+1].pixel);
+            XFillRectangle(dpy, root, g, x*cell_w, y*cell_h, cell_w, cell_h);
+
+        }
+    }
+}
+
 bool Board::step(int step_time)
 {
     if (moves.size() == 0)

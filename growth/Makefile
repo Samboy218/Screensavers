@@ -5,7 +5,7 @@ installpath = /usr/lib/xscreensaver/
 
 all: $(modName)
     
-$(modName): $(sourceFiles)
+$(modName): board.cpp cell.cpp faction.cpp growth.cpp move.cpp board.h cell.h faction.h move.h vroot.h
 	g++ -c *.cpp
 	g++ -O2 -s -DNDEBUG -o $(modName) *.o -L/usr/lib/x86_64-linux-gnu -lX11 --std=c++11
 

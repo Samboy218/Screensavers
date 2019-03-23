@@ -19,7 +19,7 @@
 // the size, in pixels, of each cell
 #define CELL_HEIGHT 10
 #define CELL_WIDTH 10
-#define NUM_FACTION 5
+#define NUM_FACTION 7
 
 //the speed to run at (FPS)
 #define FPS_RUN 30
@@ -87,12 +87,13 @@ int main()
 
     Board board(gridW, gridH, NUM_FACTION, CELL_WIDTH, CELL_HEIGHT, xcolors);
     board.init();
+    board.drawBoard(dpy, root, g);
 
     int timeWait = CLOCKS_PER_SEC / FPS_RUN;
     clock_t now;
     clock_t previous = clock();
     bool cont;
-    while(generation < 10000) 
+    while(1) 
     {
         now = clock();
         if ((now - previous) < timeWait)
@@ -103,18 +104,18 @@ int main()
         previous = now;
 
         //draw a generation
-        board.drawBoard(dpy, root, g);
         sprintf(counter, "Generation: %d", generation);
         //XSetForeground(dpy, g, xcolors[liveColor].pixel);
         //XDrawString(dpy, root, g, 50, 50, counter, strlen(counter));
+        //process moves until we are done with this time step
+        Move top = board.moves.top();
+        cont = board.step(generation);
+        //printf("%d,%d\n", top.origin_x, top.origin_y);
+        board.drawBoard(dpy, root, g, top.origin_x, top.origin_y);
+
         generation++;
         XFlush(dpy);
         cont = true;
-        //process moves until we are done with this time step
-        while(cont) {
-            cont = board.step(generation);
-        }
-        generation++;
     }
     return 0;
 }

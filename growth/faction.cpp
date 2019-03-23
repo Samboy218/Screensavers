@@ -26,22 +26,37 @@ void Faction::init(int faction_id) {
 
 //get a random numer +- 10% of the value
 unsigned int Faction::getSpeed() {
-    return speed;
+    int upper = speed * 1.1;
+    upper++;
+    int lower = speed * .9;
+    return (rand()%upper) + lower;
 }
 
 unsigned int Faction::getStrength() {
-    return strength;
+    int upper = strength * 1.1;
+    upper++;
+    int lower = strength * .9;
+    return (rand()%upper) + lower;
 }
 
 unsigned int Faction::getAccuracy() {
-    return accuracy;
+    int upper = accuracy * 1.1;
+    upper++;
+    int lower = accuracy * .9;
+    return (rand()%upper) + lower;
 }
 
 unsigned int Faction::getArmor() {
-    return armor;
+    int upper = armor * 1.1;
+    upper++;
+    int lower = armor * .9;
+    return (rand()%upper) + lower + 1;
 }
 
 unsigned int Faction::getHealth() {
-    return health;
+    int upper = health * 1.1;
+    upper++;
+    int lower = health * .9;
+    return (rand()%upper) + lower;
 }
 
