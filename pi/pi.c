@@ -1,11 +1,13 @@
+#include <math.h>
 #include <stdio.h>
-#include <cmath>
+#include <stdlib.h>
 
-double calcInside(int n);
-double calcOutside(int n);
+int digit(int N);
 
-int main()
-{
+int main(int argc, char** argv) {
+
+    digit(atoi(argv[1]));
+    printf("\n");
 }
 
 int pi_digit(int N) {
@@ -58,3 +60,5 @@ int pi_digit(int N) {
     printf("%d", predigit);
     free(A);
     return 0;
+
+}
