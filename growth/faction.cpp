@@ -29,7 +29,7 @@ unsigned int Faction::getSpeed() {
     int upper = speed * 1.1;
     upper++;
     int lower = speed * .9;
-    return (rand()%upper) + lower + 1;
+    return 300 - ((rand()%upper) + lower) + 1;
 }
 
 unsigned int Faction::getStrength() {
