@@ -35,14 +35,15 @@ void Board::init()
             board.at(x).at(y).init(-1);
         }
     }
+    //each faction gets 3 staring locations
     //init the board randomly
     //make the factions
     int interval = w/factions.size();
     for (int i = 0; i < factions.size(); i++) {
         factions.at(i).init(i);
         for (int j = 0; j < 3; j++) {
-            int start_x = (rand()%interval) + (interval * i);
-            int start_y = (rand()%(h/3)) + (j * h/3);
+            int start_x = (rand()%w);
+            int start_y = (rand()%h);
 
             setCell(start_x, start_y, i, 0);
         }
