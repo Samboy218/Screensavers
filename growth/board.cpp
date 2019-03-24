@@ -176,3 +176,13 @@ bool Board::step(int step_time)
 
 }
 
+bool Board::checkDone() {
+    int curr_fac = board.at(0).at(0).faction_id;
+    for (int i = 0; i < w; i++) {
+        for (int j = 0; j < h; j++) {
+            if (board.at(i).at(j).faction_id != curr_fac)
+                return false;
+        }
+    }
+    return true;
+}

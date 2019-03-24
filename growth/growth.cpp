@@ -17,8 +17,8 @@
 //when the board is all one color, restart
 
 // the size, in pixels, of each cell
-#define CELL_HEIGHT 20
-#define CELL_WIDTH 20
+#define CELL_HEIGHT 10
+#define CELL_WIDTH 10
 #define NUM_FACTION 7
 
 //the speed to run at (FPS)
@@ -44,10 +44,17 @@ int main()
     char counter[20];
     int generation = 0;
 
+    /*old pallete
     const char* colors[NUM_COLORS] = {"rgb:1d/1f/21", "rgb:cc/66/66", 
                                     "rgb:b5/bd/68", "rgb:81/a2/be",
                                     "rgb:f0/c6/74", "rgb:b2/94/bb", 
                                     "rgb:8a/be/b7", "rgb:c5/c8/c6"};
+    */
+
+    const char* colors[NUM_COLORS] = {"rgb:1d/1f/21", "rgb:ac/46/46", 
+                                    "rgb:95/9d/48", "rgb:61/82/9e",
+                                    "rgb:d0/a6/54", "rgb:92/74/9b", 
+                                    "rgb:6a/9e/97", "rgb:a5/a8/a6"};
     XColor xcolors[NUM_COLORS];
     XColor xc, sc;
 
@@ -92,8 +99,7 @@ int main()
     int timeWait = CLOCKS_PER_SEC / FPS_RUN;
     clock_t now;
     clock_t previous = clock();
-    bool cont;
-    while(generation < 100000) 
+    while(1) 
     {
         now = clock();
         if ((now - previous) < timeWait)
@@ -109,13 +115,16 @@ int main()
         //XDrawString(dpy, root, g, 50, 50, counter, strlen(counter));
         //process moves until we are done with this time step
         Move top = board.moves.top();
-        cont = board.step(generation);
+        board.step(generation);
         //printf("%d,%d\n", top.origin_x, top.origin_y);
         board.drawBoard(dpy, root, g, top.origin_x, top.origin_y);
 
         generation++;
+        if (generation%1000 == 0 && board.checkDone()) {
+            board.init();
+            board.drawBoard(dpy, root, g);
+        }
         XFlush(dpy);
-        cont = true;
     }
     return 0;
 }

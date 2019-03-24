@@ -19,6 +19,7 @@ class Board {
     void init();
     void drawBoard(Display *dpy, Window &root, GC &g);
     void drawBoard(Display *dpy, Window &root, GC &g, int x, int y);
+    bool checkDone();
     int getW();
     int getH();
 

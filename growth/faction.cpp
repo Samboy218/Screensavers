@@ -29,21 +29,21 @@ unsigned int Faction::getSpeed() {
     int upper = speed * 1.1;
     upper++;
     int lower = speed * .9;
-    return (rand()%upper) + lower;
+    return (rand()%upper) + lower + 1;
 }
 
 unsigned int Faction::getStrength() {
     int upper = strength * 1.1;
     upper++;
     int lower = strength * .9;
-    return (rand()%upper) + lower;
+    return (rand()%upper) + lower + 1;
 }
 
 unsigned int Faction::getAccuracy() {
     int upper = accuracy * 1.1;
     upper++;
     int lower = accuracy * .9;
-    return (rand()%upper) + lower;
+    return (rand()%upper) + lower + 1; 
 }
 
 unsigned int Faction::getArmor() {
@@ -57,6 +57,6 @@ unsigned int Faction::getHealth() {
     int upper = health * 1.1;
     upper++;
     int lower = health * .9;
-    return (rand()%upper) + lower;
+    return (rand()%upper) + lower + 1;
 }
 
