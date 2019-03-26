@@ -6,11 +6,13 @@ MazeSolverBFS::MazeSolverBFS(Maze* maze):MazeSolver(maze) {
     MazeNode* start = toSolve->getNode(curr_x, curr_y);
     start->see(true);
     queue = new NodeQueue();
+    redraw = new std::vector<MazeNode*>;
     queue->enqueue(start);
 }
 
 bool MazeSolverBFS::takeStep() {
     //make every node around us seen
+    redraw->clear();    
     if (queue->isEmpty())
         return true;
     if (curr_x == toSolve->getW()-1 && curr_y == toSolve->getH()-1)
@@ -18,6 +20,7 @@ bool MazeSolverBFS::takeStep() {
     //MazeNode* temp_node = toSolve->getNode(curr_x, curr_y);
     MazeNode* temp_node = queue->dequeue();
     temp_node->visit();
+    redraw->push_back(temp_node);
     curr_x = temp_node->getX();
     curr_y = temp_node->getY();
     if (curr_x == toSolve->getW()-1 && curr_y == toSolve->getH()-1) {
@@ -42,6 +45,7 @@ bool MazeSolverBFS::takeStep() {
             temp_node->see(true);
             temp_node->setParent(NORTHWEST);
             queue->enqueue(temp_node);
+            redraw->push_back(temp_node);
         }
     }
     temp_node = toSolve->getNode(curr_x+1, curr_y);
@@ -50,6 +54,7 @@ bool MazeSolverBFS::takeStep() {
             temp_node->see(true);
             temp_node->setParent(WEST);
             queue->enqueue(temp_node);
+            redraw->push_back(temp_node);
         }
     }
     temp_node = toSolve->getNode(curr_x, curr_y+1);
@@ -58,6 +63,7 @@ bool MazeSolverBFS::takeStep() {
             temp_node->see(true);
             temp_node->setParent(NORTH);
             queue->enqueue(temp_node);
+            redraw->push_back(temp_node);
         }
     }
     temp_node = toSolve->getNode(curr_x+1, curr_y-1);
@@ -66,6 +72,7 @@ bool MazeSolverBFS::takeStep() {
             temp_node->see(true);
             temp_node->setParent(SOUTHWEST);
             queue->enqueue(temp_node);
+            redraw->push_back(temp_node);
         }
     }
     temp_node = toSolve->getNode(curr_x-1, curr_y+1);
@@ -74,6 +81,7 @@ bool MazeSolverBFS::takeStep() {
             temp_node->see(true);
             temp_node->setParent(NORTHEAST);
             queue->enqueue(temp_node);
+            redraw->push_back(temp_node);
         }
     }
     temp_node = toSolve->getNode(curr_x, curr_y-1);
@@ -82,6 +90,7 @@ bool MazeSolverBFS::takeStep() {
             temp_node->see(true);
             temp_node->setParent(SOUTH);
             queue->enqueue(temp_node);
+            redraw->push_back(temp_node);
         }
     }
     temp_node = toSolve->getNode(curr_x-1, curr_y);
@@ -90,6 +99,7 @@ bool MazeSolverBFS::takeStep() {
             temp_node->see(true);
             temp_node->setParent(EAST);
             queue->enqueue(temp_node);
+            redraw->push_back(temp_node);
         }
     }
     temp_node = toSolve->getNode(curr_x-1, curr_y-1);
@@ -98,6 +108,7 @@ bool MazeSolverBFS::takeStep() {
             temp_node->see(true);
             temp_node->setParent(SOUTHEAST);
             queue->enqueue(temp_node);
+            redraw->push_back(temp_node);
         }
     }
     return false;
@@ -113,6 +124,7 @@ void MazeSolverBFS::paintPath(MazeNode* node) {
 
     while(curr) {
         curr->setOnStack(true);
+        redraw->push_back(curr);
         switch (curr->getParent()) {
             case NORTH:
                 y--;

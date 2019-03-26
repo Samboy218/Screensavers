@@ -11,7 +11,7 @@
 
 #define MAZE_WIDTH 30
 #define MAZE_HEIGHT 30
-#define FPS_RUN 30
+#define FPS_RUN 60
 
 enum valid_colors {
     COLOR_BLACK, COLOR_RED,
@@ -93,6 +93,8 @@ int main(int argc, char** argv) {
     clock_t now;
     clock_t previous = clock();
     while (true) {
+        maze_1->drawXMaze(dpy, double_buffer_1, g, draw_colors);
+        maze_2->drawXMaze(dpy, double_buffer_2, g, draw_colors);
         while (!(solver_1->takeStep() & solver_2->takeStep())) {
             now = clock();
             if ((now - previous) < time_wait) {
@@ -100,8 +102,8 @@ int main(int argc, char** argv) {
             }
             previous = now;
 
-            maze_1->drawXMaze(dpy, double_buffer_1, g, draw_colors);
-            maze_2->drawXMaze(dpy, double_buffer_2, g, draw_colors);
+            maze_1->drawXMazeNode(dpy, double_buffer_1, g, draw_colors, solver_1->redraw);
+            maze_2->drawXMazeNode(dpy, double_buffer_2, g, draw_colors, solver_2->redraw);
             XCopyArea(dpy, double_buffer_1, root, g, 0, 0, wa.width/2, wa.height, 0, 0);
             XCopyArea(dpy, double_buffer_2, root, g, 0, 0, wa.width/2, wa.height, wa.width/2, 0);
             XFlush(dpy);

@@ -45,6 +45,19 @@ debug: *.cpp *.h
 	g++ -c -o mazeSolverBFS.o mazeSolverBFS.cpp -g -lefence
 	g++ -o mymaze main.o maze.o mazeNode.o nodeStack.o nodeQueue.o mazeSolver.o mazeSolverA.o mazeSolverDFS.o mazeSolverBFS.o -g -lefence -L/usr/lib/x86_64-linux-gnu -lX11
 
+.PHONY: speed_debug
+speed_debug: *.cpp *.h
+	g++ -c -o nodeStack.o nodeStack.cpp -pg -no-pie
+	g++ -c -o nodeQueue.o nodeQueue.cpp -pg -no-pie
+	g++ -c -o mazeNode.o mazeNode.cpp -pg -no-pie
+	g++ -c -o maze.o maze.cpp -pg -no-pie
+	g++ -c -o main.o main.cpp -pg -no-pie
+	g++ -c -o mazeSolver.o mazeSolver.cpp -pg -no-pie
+	g++ -c -o mazeSolverA.o mazeSolverA.cpp -pg -no-pie
+	g++ -c -o mazeSolverDFS.o mazeSolverDFS.cpp -pg -no-pie
+	g++ -c -o mazeSolverBFS.o mazeSolverBFS.cpp -pg -no-pie
+	g++ -o mymaze main.o maze.o mazeNode.o nodeStack.o nodeQueue.o mazeSolver.o mazeSolverA.o mazeSolverDFS.o mazeSolverBFS.o -pg -no-pie -L/usr/lib/x86_64-linux-gnu -lX11
+
 .PHONY:clean
 clean:
 	rm -rf *.o

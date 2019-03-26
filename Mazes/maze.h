@@ -5,6 +5,7 @@
 #include "nodeStack.h"
 #include <X11/Xlib.h>
 #include <stdlib.h>
+#include <vector>
 
 class Maze {
     public:
@@ -20,6 +21,7 @@ class Maze {
         MazeNode* getNode(int x, int y);
         void drawMaze();
         void drawXMaze(Display *dpy, Pixmap &root, GC &g, XColor* colors);
+        void drawXMazeNode(Display *dpy, Pixmap &root, GC &g, XColor* colors, std::vector<MazeNode*>* toDraw);
         void toFile(char* filename);
         void genMaze();
         int getH();

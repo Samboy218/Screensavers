@@ -7,6 +7,7 @@ MazeSolverA::MazeSolverA(Maze* maze) : MazeSolver(maze) {
     start->visit();
     open = new std::vector<MazeNode*>;
     closed = new std::vector<MazeNode*>;
+    redraw = new std::vector<MazeNode*>;
     start->setParent(DIRECTION_NONE);
     int g = getG(start);
     int f = g+getH(start);
@@ -23,8 +24,7 @@ bool MazeSolverA::takeStep() {
         //if in closed, ignore it
         //if in open list, check if the F score from current square is better
         //if not in open, add it and compute its scores
-
-
+    redraw->clear();    
     if (open->size() == 0)
         return true;
     if (curr_x == toSolve->getW()-1 && curr_y == toSolve->getH()-1)
@@ -44,6 +44,7 @@ bool MazeSolverA::takeStep() {
     open->resize(open->size()-1);
     lowest_node->visit();
     closed->push_back(lowest_node);
+    redraw->push_back(lowest_node);
     curr_x = lowest_node->getX();
     curr_y = lowest_node->getY();
     if (curr_x == toSolve->getW()-1 && curr_y == toSolve->getH()-1) {
@@ -89,6 +90,7 @@ bool MazeSolverA::takeStep() {
                 curr_node->setF(f);
                 curr_node->see(true);
                 open->push_back(curr_node);
+                redraw->push_back(curr_node);
             }
         }
     }
@@ -177,6 +179,7 @@ void MazeSolverA::paintPath(MazeNode* node) {
 
     while (curr) {
         curr->setOnStack(true);
+        redraw->push_back(curr);
         switch (curr->getParent()) {
             case NORTH:
                 y--;

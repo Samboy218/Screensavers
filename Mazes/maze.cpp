@@ -471,3 +471,60 @@ void Maze::drawXMaze(Display *dpy, Window &root, GC &g, XColor* colors) {
         }
     }
 }
+
+void Maze::drawXMazeNode(Display *dpy, Window &root, GC &g, XColor* colors, std::vector<MazeNode*>* toDraw) {
+    //go through each node, and draw it. easy
+    //colors is an array of xcolors where
+    //colors[0] = bgcolor, colors[1]=wall, colors[2]=seen, colors[3]=visited
+    //colors[4] = on stack
+    int pixel_thick_x = (window_w/w)/4;
+    int pixel_thick_y = (window_h/h)/4;
+    int block_w = pixel_thick_x * 4;
+    int block_h = pixel_thick_y * 4;
+    //printf("x:%d, y:%d\n", block_w*w, block_h*h);
+    MazeNode* curr;
+    uint8_t walls;
+    for (int i = 0; i < toDraw->size(); i++) {
+        curr = toDraw->at(i);
+        int curr_x = curr->getX()*block_w;
+        int curr_y = curr->getY()*block_h;
+        //draw a full rectangle, and then blank out the parts that are open
+        XSetForeground(dpy, g, colors[1].pixel);
+        XFillRectangle(dpy, root, g, 
+                       curr_x, curr_y, block_w, block_h);
+        if (curr->onStack())
+            XSetForeground(dpy, g, colors[4].pixel);
+        else if (curr->isVisited())
+            XSetForeground(dpy, g, colors[3].pixel);
+        else if (curr->isSeen())
+            XSetForeground(dpy, g, colors[2].pixel);
+        else
+            XSetForeground(dpy, g, colors[0].pixel);
+
+        XFillRectangle(dpy, root, g,
+                    curr_x+pixel_thick_x, curr_y+pixel_thick_y,
+                    pixel_thick_x*2, pixel_thick_y*2);
+        walls = curr->getWalls();
+        if (!(walls & 0x01)) {
+            XFillRectangle(dpy, root, g,
+                        curr_x+pixel_thick_x, curr_y,
+                        pixel_thick_x*2, pixel_thick_y);
+        }
+        //for some reason east and west get flipped...
+        if (!(walls & 0x04)) {
+            XFillRectangle(dpy, root, g,
+                        curr_x+pixel_thick_x*3, curr_y+pixel_thick_y,
+                        pixel_thick_x, pixel_thick_y*2);
+        }
+        if (!(walls & 0x10)) {
+            XFillRectangle(dpy, root, g,
+                        curr_x+pixel_thick_x, curr_y+pixel_thick_y*3,
+                        pixel_thick_x*2, pixel_thick_y);
+        }
+        if (!(walls & 0x40)) {
+            XFillRectangle(dpy, root, g,
+                        curr_x, curr_y+pixel_thick_y,
+                        pixel_thick_x, pixel_thick_y*2);
+        }
+    }
+}
