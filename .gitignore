@@ -1,7 +1,9 @@
 *.o
 *.swp
 *.exe
+gmon.out
 simpleSquares
 mymaze
 calcPi
 growth
+gameOfLife
