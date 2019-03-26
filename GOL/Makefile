@@ -26,4 +26,4 @@ uninstall:
 
 .PHONY: debug
 debug: $(sourceName) vroot.h
-	 g++ -o $(modName) $(sourceName) -L/usr/lib/x86_64-linux-gnu -lX11 -pg
+	 g++ -o $(modName) $(sourceName) -L/usr/lib/x86_64-linux-gnu -lX11 -pg -no-pie

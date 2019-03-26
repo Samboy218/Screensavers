@@ -43,6 +43,8 @@ class GOLBoard
     int getH();
     void drawBoard(Display *dpy, Window &root, GC &g, 
                    XColor liveColor, XColor deadColor);
+    void drawBoardAll(Display *dpy, Window &root, GC &g, 
+                   XColor liveColor, XColor deadColor);
 
 
     private:
@@ -106,13 +108,14 @@ int main()
 
     GOLBoard board(gridW, gridH);
     board.init(LIFE_CHANCE);
+    board.drawBoardAll(dpy, root, g, xcolors[liveColor], xcolors[0]);
 
     int timeWait = CLOCKS_PER_SEC / FPS_RUN;
     clock_t now;
     clock_t previous = clock();
 
     
-    while(1) 
+    while(1)
     {
         now = clock();
         if ((now - previous) < timeWait)
@@ -136,11 +139,40 @@ int main()
             board.init(LIFE_CHANCE);
             generation = 0;
             liveColor = (random()%(NUM_COLORS-1)) + 1; 
+            board.drawBoardAll(dpy, root, g, xcolors[liveColor], xcolors[0]);
         }
     }
 }
 
 void GOLBoard::drawBoard(Display *dpy, Window &root, GC &g, 
+                         XColor liveColor, XColor deadColor)
+{
+    unsigned char* cellPtr;
+    unsigned char* cellPtr2;
+    cellPtr = board;
+    cellPtr2 = tempBoard;
+    for (int y = 0; y < h; y++)
+    {
+        for (int x = 0; x < w; x++)
+        {
+            if ( ((*cellPtr) & 0x01) != ((*cellPtr2) & 0x01)) {
+                if ((*cellPtr) & 0x01)
+                {
+                    XSetForeground(dpy, g, liveColor.pixel);
+                }
+                else
+                {
+                    XSetForeground(dpy, g, deadColor.pixel);
+                }
+                XFillRectangle(dpy, root, g, x*CELL_W, y*CELL_H, CELL_W, CELL_H);
+            }
+            cellPtr++;
+            cellPtr2++;
+        }
+    }
+} 
+
+void GOLBoard::drawBoardAll(Display *dpy, Window &root, GC &g, 
                          XColor liveColor, XColor deadColor)
 {
     unsigned char* cellPtr;
@@ -157,11 +189,11 @@ void GOLBoard::drawBoard(Display *dpy, Window &root, GC &g,
             {
                 XSetForeground(dpy, g, deadColor.pixel);
             }
-            cellPtr++;
             XFillRectangle(dpy, root, g, x*CELL_W, y*CELL_H, CELL_W, CELL_H);
+            cellPtr++;
         }
     }
-} 
+}
 
 GOLBoard::GOLBoard(int x, int y)
 {
