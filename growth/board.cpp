@@ -21,6 +21,7 @@ Board::Board(int x, int y, int num_fac, int cell_width, int cell_height, XColor*
     cell_w = cell_width;
     cell_h = cell_height;
     colors = xcolors;
+    toDraw = new std::vector<Cell*>;
 
 }
 
@@ -59,6 +60,7 @@ int Board::setCell(int x, int y, int facID, int step_time) {
     int id = rand();
     moves.push(Move(time, id, x, y));
     board.at(x).at(y).move_id = id;
+    toDraw->push_back(&board.at(x).at(y));
 }
 
 void Board::drawBoard(Display *dpy, Window &root, GC &g)
@@ -74,13 +76,22 @@ void Board::drawBoard(Display *dpy, Window &root, GC &g)
     }
 }
 
+void Board::drawUpdated(Display *dpy, Window &root, GC &g) {
+    for (int i = 0; i < toDraw->size(); i++) {
+        Cell* curr = toDraw->at(i);
+        XSetForeground(dpy, g, colors[curr->faction_id+1].pixel);
+        XFillRectangle(dpy, root, g, curr->x*cell_w, curr->y*cell_h, cell_w, cell_h);
+    }
+    toDraw->clear();
+}
+
 void Board::drawBoard(Display *dpy, Window &root, GC &g, int x, int y)
 {
     //only draw the neighbors of the passed in cell
-    for (int i = x-1; i < x+2; i++) {
+    for (int i = x-1; i <= x+1; i++) {
         if (i < 0 || i >= w)
             continue;
-        for (int j = y-1; j < y+2; j++) {
+        for (int j = y-1; j <= y+1; j++) {
             if (j < 0 || j >= h)
                 continue;
             int fac = board.at(i).at(j).faction_id;
@@ -145,8 +156,6 @@ bool Board::step(int step_time)
             moveChoice = i;
 
     }
-    //no valid move from this node
-    //but actually still queue a move because we may have one in the future
     if (moveChoice != -1) {
 
         //okay now we have a valid move, now strike!
@@ -160,19 +169,19 @@ bool Board::step(int step_time)
             targetArmor = factions.at(neighbors[moveChoice].faction_id).getArmor();
         targetArmor++;
         //generate a random number for accuracy and armor, larger number wins
-        if (rand()%hitAccuracy > rand()%targetArmor)
-            board.at(neighbors[moveChoice].x).at(neighbors[moveChoice].y).curr_health -= hitPower;
-        
-        if (board.at(neighbors[moveChoice].x).at(neighbors[moveChoice].y).curr_health <= 0)
-            setCell(neighbors[moveChoice].x, neighbors[moveChoice].y, currCell.faction_id, step_time);
+        if (rand()%hitAccuracy > rand()%targetArmor) {
+            board.at(neighbors[moveChoice].x).at(neighbors[moveChoice].y).curr_health -= hitPower; 
+            if (board.at(neighbors[moveChoice].x).at(neighbors[moveChoice].y).curr_health <= 0)
+                setCell(neighbors[moveChoice].x, neighbors[moveChoice].y, currCell.faction_id, step_time);
+        }
     }
     //queue another move
     unsigned int time = factions.at(currCell.faction_id).getSpeed() + step_time;
     int id = rand();
     moves.push(Move(time, id, currCell.x, currCell.y));
     board.at(currCell.x).at(currCell.y).move_id = id;
-    if (moveChoice == -1)
-        return false;
+    //if (moveChoice == -1)
+    //    return false;
     return true;
 
 }

@@ -17,12 +17,12 @@
 //when the board is all one color, restart
 
 // the size, in pixels, of each cell
-#define CELL_HEIGHT 10
-#define CELL_WIDTH 10
+#define CELL_HEIGHT 15
+#define CELL_WIDTH 15
 #define NUM_FACTION 7
 
 //the speed to run at (FPS)
-#define FPS_RUN 60
+#define FPS_RUN 600
 
 enum valid_colors {
     COLOR_BLACK, COLOR_RED,
@@ -84,13 +84,8 @@ int main()
     XSetForeground(dpy, g, WhitePixelOfScreen(DefaultScreenOfDisplay(dpy)));
 
     //now we can make art
-    //init GOL
     int gridW = wa.width/CELL_WIDTH;
     int gridH = wa.height/CELL_HEIGHT;
-    //printf("w: %d, h: %d\n", wa.width, wa.height);
-
-
-    int liveColor = (rand()%(NUM_COLORS-1)) + 1; 
 
     Board board(gridW, gridH, NUM_FACTION, CELL_WIDTH, CELL_HEIGHT, xcolors);
     board.init();
@@ -99,28 +94,24 @@ int main()
     int timeWait = CLOCKS_PER_SEC / FPS_RUN;
     clock_t now;
     clock_t previous = clock();
-    while(1) 
+    bool moved = false;
+    while(1)
     {
         now = clock();
         if ((now - previous) < timeWait)
         {
             //printf("had to wait %d us at gen %d\n", timeWait-(now-previous), generation);
-            //usleep(timeWait - (now - previous));
+            usleep(timeWait - (now - previous));
         }
         previous = now;
 
-        //draw a generation
-        sprintf(counter, "Generation: %d", generation);
-        //XSetForeground(dpy, g, xcolors[liveColor].pixel);
-        //XDrawString(dpy, root, g, 50, 50, counter, strlen(counter));
         //process moves until we are done with this time step
-        Move top = board.moves.top();
-        board.step(generation);
-        //printf("%d,%d\n", top.origin_x, top.origin_y);
-        board.drawBoard(dpy, root, g, top.origin_x, top.origin_y);
+        while (board.step(generation)){}
+        board.drawUpdated(dpy, root, g);
 
         generation++;
         if (generation%1000 == 0 && board.checkDone()) {
+            sleep(1);
             board.init();
             board.drawBoard(dpy, root, g);
         }

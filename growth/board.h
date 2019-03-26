@@ -19,12 +19,14 @@ class Board {
     void init();
     void drawBoard(Display *dpy, Window &root, GC &g);
     void drawBoard(Display *dpy, Window &root, GC &g, int x, int y);
+    void drawUpdated(Display *dpy, Window &root, GC &g);
     bool checkDone();
     int getW();
     int getH();
 
     std::vector<std::vector<Cell> > board;
     std::vector<Faction> factions;
+    std::vector<Cell*>* toDraw;
     std::priority_queue<Move, std::vector<Move>, compareMove> moves;
     int w;
     int h;
