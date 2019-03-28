@@ -82,12 +82,34 @@ int main(int argc, char** argv) {
 
     Maze* maze_1 = new Maze(my_maze);
     MazeSolver* solver_1;
-    //solver_1 = new MazeSolverA(maze_1);
-    solver_1 = new MazeSolverBFS(maze_1);
 
     Maze* maze_2 = new Maze(my_maze);
     MazeSolver* solver_2;
-    solver_2 = new MazeSolverA(maze_2);
+    switch (rand()%3) {
+        case 0:
+            solver_1 = new MazeSolverA(maze_1);
+            if (rand()%2) 
+                solver_2 = new MazeSolverBFS(maze_2);
+            else
+                solver_2 = new MazeSolverDFS(maze_2);
+        break;
+        case 1:
+            solver_1 = new MazeSolverBFS(maze_1);
+            if (rand()%2) 
+                solver_2 = new MazeSolverA(maze_2);
+            else
+                solver_2 = new MazeSolverDFS(maze_2);
+
+        break;
+        case 2:
+            solver_1 = new MazeSolverDFS(maze_1);
+            if (rand()%2) 
+                solver_2 = new MazeSolverBFS(maze_2);
+            else
+                solver_2 = new MazeSolverA(maze_2);
+
+        break;
+    }
 
     int time_wait = CLOCKS_PER_SEC/FPS_RUN;
     clock_t now;
@@ -123,8 +145,31 @@ int main(int argc, char** argv) {
         my_maze->genMaze();
         maze_1 = new Maze(my_maze);
         maze_2 = new Maze(my_maze);
-        solver_1 = new MazeSolverA(maze_1);
-        solver_2 = new MazeSolverDFS(maze_2);
+        switch (rand()%3) {
+            case 0:
+                solver_1 = new MazeSolverA(maze_1);
+                if (rand()%2) 
+                    solver_2 = new MazeSolverBFS(maze_2);
+                else
+                    solver_2 = new MazeSolverDFS(maze_2);
+            break;
+            case 1:
+                solver_1 = new MazeSolverBFS(maze_1);
+                if (rand()%2) 
+                    solver_2 = new MazeSolverA(maze_2);
+                else
+                    solver_2 = new MazeSolverDFS(maze_2);
+
+            break;
+            case 2:
+                solver_1 = new MazeSolverDFS(maze_1);
+                if (rand()%2) 
+                    solver_2 = new MazeSolverBFS(maze_2);
+                else
+                    solver_2 = new MazeSolverA(maze_2);
+
+            break;
+        }
 
         sleep(3);
     }
