@@ -4,6 +4,6 @@
 #include "sorter.h"
 
 class CocktailSort : public Sorter {
-}
+};
 
 #endif

@@ -4,6 +4,6 @@
 #include "sorter.h"
 
 class RadixSort : public Sorter {
-}
+};
 
 #endif

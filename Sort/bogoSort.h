@@ -4,6 +4,6 @@
 #include "sorter.h"
 
 class BogoSort : public Sorter {
-}
+};
 
 #endif

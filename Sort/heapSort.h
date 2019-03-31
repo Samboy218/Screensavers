@@ -4,6 +4,6 @@
 #include "sorter.h"
 
 class HeapSort : public Sorter {
-}
+};
 
 #endif

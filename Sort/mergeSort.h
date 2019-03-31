@@ -4,6 +4,6 @@
 #include "sorter.h"
 
 class MergeSort : public Sorter {
-}
+};
 
 #endif

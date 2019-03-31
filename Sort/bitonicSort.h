@@ -4,6 +4,6 @@
 #include "sorter.h"
 
 class BitonicSort : public Sorter {
-}
+};
 
 #endif

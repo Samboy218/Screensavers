@@ -6,6 +6,9 @@
 #include <string.h>
 #include "vroot.h"
 
+#include "sortManager.h"
+#include "bubbleSort.h"
+
 /*
 sorting methods to implement:
 Merge depth/breadth first
@@ -19,11 +22,6 @@ comb
 quick
 bogosort (maybe dont have that one appear too often)
 */
-
-
-#define CELL_HEIGHT 15
-#define CELL_WIDTH 15
-#define NUM_FACTION 7
 
 //the speed to run at (FPS)
 #define FPS_RUN 60
@@ -84,8 +82,11 @@ int main()
     XSetForeground(dpy, g, WhitePixelOfScreen(DefaultScreenOfDisplay(dpy)));
 
     //now we can make art
-    int gridW = wa.width/CELL_WIDTH;
-    int gridH = wa.height/CELL_HEIGHT;
+    SortManager manager = SortManager(10, wa.width, wa.height);
+    for (int i = 0; i < 10; i++) {
+        manager.setSorter(i, new BubbleSort());
+    }
+    manager.shuffleAll();
 
     int timeWait = CLOCKS_PER_SEC / FPS_RUN;
     clock_t now;
@@ -96,13 +97,14 @@ int main()
         if ((now - previous) < timeWait)
         {
             //printf("had to wait %d us at gen %d\n", timeWait-(now-previous), generation);
-            usleep(timeWait - (now - previous));
+            //usleep(timeWait - (now - previous));
         }
         previous = now;
+        //printf("doing step\n");
 
         //process moves until we are done with this time step
-
-
+        manager.stepAll();
+        manager.drawArrays(dpy, root, g, xcolors);
 
         XFlush(dpy);
     }

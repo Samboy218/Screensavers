@@ -4,6 +4,6 @@
 #include "sorter.h"
 
 class QuickSort : public Sorter {
-}
+};
 
 #endif

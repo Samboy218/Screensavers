@@ -4,6 +4,6 @@
 #include "sorter.h"
 
 class CombSort : public Sorter {
-}
+};
 
 #endif

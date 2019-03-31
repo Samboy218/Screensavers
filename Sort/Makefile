@@ -1,11 +1,10 @@
 modName = sort
 installpath = /usr/lib/xscreensaver/
 
-
 all: $(modName)
     
-$(modName): sort.cpp bogoSort.h combSort.h mergeSort.h radixSort.h sorter.h bitonicSort.h cocktailSort.h heapSort.h quickSort.h shellSort.h vroot.h
-	g++ -c *.cpp
+$(modName): sort.cpp bogoSort.h combSort.h mergeSort.h radixSort.h sorter.h bitonicSort.h cocktailSort.h heapSort.h quickSort.h shellSort.h vroot.h bubbleSort.cpp sort.cpp sorter.cpp sortManager.cpp
+	g++ -Wall -c *.cpp
 	g++ -O2 -s -DNDEBUG -o $(modName) *.o -L/usr/lib/x86_64-linux-gnu -lX11 --std=c++11
 
 .PHONY: debug
@@ -25,9 +24,9 @@ clean:
 
 .PHONY: install
 install: $(modName)
-	cp $(modName) $(installpath)
+	sudo cp $(modName) $(installpath)
 
 .PHONY: uninstall
 uninstall: 
-	rm -f $(installpath)$(modName)
+	sudo rm -f $(installpath)$(modName)
 
