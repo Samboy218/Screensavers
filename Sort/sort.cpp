@@ -10,6 +10,7 @@
 #include "bubbleSort.h"
 #include "cocktailSort.h"
 #include "insertionSort.h"
+#include "bogoSort.h"
 
 /*
 sorting methods to implement:
@@ -89,10 +90,12 @@ int main()
     int numArrays = wa.width/cellSize;
     SortManager manager = SortManager(numArrays, wa.width, wa.height);
     for (int i = 0; i < numArrays; i++) {
-        if (i < numArrays/3)
+        if (i < numArrays/4)
             manager.setSorter(i, new CocktailSort());
-        else if (i < numArrays*2/3) 
+        else if (i < numArrays*2/4) 
             manager.setSorter(i, new InsertionSort());
+        else if (i < numArrays*3/4)
+            manager.setSorter(i, new BogoSort());
         else
             manager.setSorter(i, new BubbleSort());
     }
