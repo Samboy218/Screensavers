@@ -7,6 +7,7 @@ class BubbleSort : public Sorter {
     public:
     BubbleSort();
     virtual bool sortStep();
+    virtual void reset();
     private:
     int currInd;
 };

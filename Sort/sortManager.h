@@ -14,12 +14,14 @@ class SortManager {
     bool stepAll();
     void setSorter(int index, Sorter* sorter);
     void drawArrays(Display *dpy, Window &root, GC &g, XColor* colors);
+    void drawAll(Display *dpy, Window &root, GC &g, XColor* colors);
     void shuffleAll();
 
 
     private:
     int** arrays;
     Sorter** sorters;
+    bool* done;
     int numArrays;
     int cell_w;
     int cell_h;

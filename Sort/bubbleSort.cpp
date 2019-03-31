@@ -4,10 +4,14 @@ BubbleSort::BubbleSort() {
     currInd = 0;
 }
 
+void BubbleSort::reset() {
+    currInd = 0;
+}
+
 bool BubbleSort::sortStep() {
     //go through the array, find an out-of-order pair and swap them
     for (int i = currInd; i < 99; i++) {
-        if (toSort[i] < toSort[i+1]) {
+        if (toSort[i] > toSort[i+1]) {
             int temp = toSort[i];
             toSort[i] = toSort[i+1];
             toSort[i+1] = temp;
@@ -16,8 +20,8 @@ bool BubbleSort::sortStep() {
         }
     }
     //no swap, but we don't know if we're done
-    for (int i = 0; i < currInd; i++) {
-        if (toSort[i] < toSort[i+1]) {
+    for (int i = 0; i < 99; i++) {
+        if (toSort[i] > toSort[i+1]) {
             int temp = toSort[i];
             toSort[i] = toSort[i+1];
             toSort[i+1] = temp;

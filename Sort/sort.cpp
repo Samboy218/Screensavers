@@ -8,6 +8,8 @@
 
 #include "sortManager.h"
 #include "bubbleSort.h"
+#include "cocktailSort.h"
+#include "insertionSort.h"
 
 /*
 sorting methods to implement:
@@ -82,11 +84,20 @@ int main()
     XSetForeground(dpy, g, WhitePixelOfScreen(DefaultScreenOfDisplay(dpy)));
 
     //now we can make art
-    SortManager manager = SortManager(10, wa.width, wa.height);
-    for (int i = 0; i < 10; i++) {
-        manager.setSorter(i, new BubbleSort());
+    //try to make cells square
+    int cellSize = wa.height/100;
+    int numArrays = wa.width/cellSize;
+    SortManager manager = SortManager(numArrays, wa.width, wa.height);
+    for (int i = 0; i < numArrays; i++) {
+        if (i < numArrays/3)
+            manager.setSorter(i, new CocktailSort());
+        else if (i < numArrays*2/3) 
+            manager.setSorter(i, new InsertionSort());
+        else
+            manager.setSorter(i, new BubbleSort());
     }
     manager.shuffleAll();
+    manager.drawAll(dpy, root, g, xcolors);
 
     int timeWait = CLOCKS_PER_SEC / FPS_RUN;
     clock_t now;
@@ -97,14 +108,20 @@ int main()
         if ((now - previous) < timeWait)
         {
             //printf("had to wait %d us at gen %d\n", timeWait-(now-previous), generation);
-            //usleep(timeWait - (now - previous));
+            usleep(timeWait - (now - previous));
         }
         previous = now;
         //printf("doing step\n");
 
         //process moves until we are done with this time step
-        manager.stepAll();
-        manager.drawArrays(dpy, root, g, xcolors);
+        if (manager.stepAll()) {
+            sleep(1);
+            manager.shuffleAll();
+            manager.drawAll(dpy, root, g, xcolors);
+        }
+        else {
+            manager.drawArrays(dpy, root, g, xcolors);
+        }
 
         XFlush(dpy);
     }
