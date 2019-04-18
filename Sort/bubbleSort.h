@@ -10,6 +10,8 @@ class BubbleSort : public Sorter {
     virtual void reset();
     private:
     int currInd;
+    //used to make it take 2 timesteps if we swap
+    bool swapped;
 };
 
 #endif
