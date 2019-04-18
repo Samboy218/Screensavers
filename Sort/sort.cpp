@@ -11,6 +11,7 @@
 #include "cocktailSort.h"
 #include "insertionSort.h"
 #include "bogoSort.h"
+#include "quickSort.h"
 
 /*
 sorting methods to implement:
@@ -95,7 +96,7 @@ int main()
         else if (i < numArrays*2/4) 
             manager.setSorter(i, new InsertionSort());
         else if (i < numArrays*3/4)
-            manager.setSorter(i, new BogoSort());
+            manager.setSorter(i, new QuickSort());
         else
             manager.setSorter(i, new BubbleSort());
     }

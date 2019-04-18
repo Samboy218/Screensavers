@@ -3,14 +3,14 @@ installpath = /usr/lib/xscreensaver/
 
 all: $(modName)
     
-$(modName): sort.cpp bogoSort.h combSort.h mergeSort.h radixSort.h sorter.h bitonicSort.h cocktailSort.h heapSort.h quickSort.h shellSort.h vroot.h bubbleSort.cpp sort.cpp sorter.cpp sortManager.cpp insertionSort.cpp bogoSort.cpp
+$(modName): sort.cpp bogoSort.h combSort.h mergeSort.h radixSort.h sorter.h bitonicSort.h cocktailSort.h heapSort.h quickSort.h shellSort.h vroot.h bubbleSort.cpp sort.cpp sorter.cpp sortManager.cpp insertionSort.cpp bogoSort.cpp quickSort.cpp
 	g++ -Wall -c *.cpp
 	g++ -O2 -s -DNDEBUG -o $(modName) *.o -L/usr/lib/x86_64-linux-gnu -lX11 --std=c++11
 
 .PHONY: debug
 debug: $(sourceFiles)
 	g++ -c *.cpp -ggdb
-	g++ -o $(modName) *.o -L/usr/lib/x86_64-linux-gnu -lX11 --std=c++11 -ggdb
+	g++ -o $(modName) *.o -L/usr/lib/x86_64-linux-gnu -lX11 --std=c++11 -ggdb -lefence
 
 .PHONY: speed_debug
 speed_debug: $(sourceFiles)
