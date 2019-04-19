@@ -10,6 +10,7 @@ class CocktailSort : public Sorter {
     virtual void reset();
     private:
     bool direction;
+    bool swapped;
     int currInd;
 };
 

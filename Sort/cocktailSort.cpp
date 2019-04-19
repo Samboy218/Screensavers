@@ -2,69 +2,67 @@
 
 
 CocktailSort::CocktailSort() {
-    currInd = 0;
-    //true means we were incrementing, false means we were decrementing
+    currInd = 99;
+    //true means we were decrementing, false means we're incrementing
     direction = true;
+    swapped = false;
 }
 
 void CocktailSort::reset() {
-    currInd = 0;
+    currInd = 99;
     direction = true;
+    swapped = false;
 }
 
 bool CocktailSort::sortStep() {
-    //go through the array, find an out-of-order pair and swap them
+
+    if (swapped) {
+        swapped = false;
+        return false;
+    }
+    bool check = false;
+    if (currInd == 0 && direction) {
+        direction = false;
+        check = true;
+    }
+    if (currInd == 99 && !direction) {
+        direction = true;
+        check = true;
+    }
+
+    if (check) {
+        bool done = true;
+        for (int i = 0; i < 100; i++) {
+            if (toSort[i] > toSort[i+1])
+                done = false;
+        }
+        return done;
+    }
+
+
     switch (direction) {
         case true:
-        for (int i = currInd; i < 99; i++) {
-            if (toSort[i] > toSort[i+1]) {
-                int temp = toSort[i];
-                toSort[i] = toSort[i+1];
-                toSort[i+1] = temp;
-                currInd = i+1;
-                direction = true;
+            if (toSort[currInd] < toSort[currInd-1]) {
+                int temp = toSort[currInd];
+                toSort[currInd] = toSort[currInd-1];
+                toSort[currInd-1] = temp;
+                currInd--;
+                swapped = true;
                 return false;
             }
-        }
-        //no swap, we've gone through the array now do it backwards
-        for (int i = 99; i > 0; i--) {
-            if (toSort[i] < toSort[i-1]) {
-                int temp = toSort[i];
-                toSort[i] = toSort[i-1];
-                toSort[i-1] = temp;
-                currInd = i-1;
-                direction = false;
-                return false;
-            }
-        }
-
+            currInd--;
         break;
-
         case false:
-        for (int i = currInd; i > 0; i--) {
-            if (toSort[i] < toSort[i-1]) {
-                int temp = toSort[i];
-                toSort[i] = toSort[i-1];
-                toSort[i-1] = temp;
-                currInd = i-1;
-                direction = false;
+            if (toSort[currInd] > toSort[currInd+1]) {
+                int temp = toSort[currInd];
+                toSort[currInd] = toSort[currInd+1];
+                toSort[currInd+1] = temp;
+                currInd++;
+                swapped = true;
                 return false;
             }
-        }
-        //no swap, we've gone through the array now do it backwards
-        for (int i = 0; i < 99; i++) {
-            if (toSort[i] > toSort[i+1]) {
-                int temp = toSort[i];
-                toSort[i] = toSort[i+1];
-                toSort[i+1] = temp;
-                currInd = i+1;
-                direction = true;
-                return false;
-            }
-        }
-
+            currInd++;
         break;
     }
-    //no swap and that means we are done
-    return true;
+    return false;
 }
