@@ -12,6 +12,7 @@ class InsertionSort : public Sorter {
     int currHead;
     int currInd;
     int currVal;
+    bool swapped;
 };
 
 #endif

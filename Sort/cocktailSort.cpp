@@ -32,7 +32,7 @@ bool CocktailSort::sortStep() {
 
     if (check) {
         bool done = true;
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 99; i++) {
             if (toSort[i] > toSort[i+1])
                 done = false;
         }

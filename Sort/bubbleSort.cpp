@@ -20,9 +20,11 @@ bool BubbleSort::sortStep() {
 
     if (currInd < 1) {
         bool done = true;
-        for (int i = 0; i < 100; i++) {
-            if (toSort[i] > toSort[i+1])
+        for (int i = 99; i > 0; i--) {
+            if (toSort[i] < toSort[i-1]) {
                 done = false;
+                break;
+            }
         }
         if (done)
             return true;
